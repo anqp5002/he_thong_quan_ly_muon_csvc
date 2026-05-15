@@ -1,0 +1,73 @@
+<UserControl x:Class="CSVC_PTIT.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="8">
+
+            <!-- Hàng 1: 4 card thống kê -->
+            <UniformGrid Columns="4" Margin="0,0,0,24">
+
+                <!-- Card: Tổng CSVC -->
+                <materialDesign:Card Margin="8" Padding="20" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="Devices" Width="32" Height="32"
+                            Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                        <TextBlock Text="Tổng CSVC" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
+                        <TextBlock Text="10" FontSize="28" FontWeight="Bold" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Card: Phòng học -->
+                <materialDesign:Card Margin="8" Padding="20" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="DoorOpen" Width="32" Height="32"
+                            Foreground="#4CAF50" />
+                        <TextBlock Text="Phòng học" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
+                        <TextBlock Text="5" FontSize="28" FontWeight="Bold" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Card: Đơn đang chờ -->
+                <materialDesign:Card Margin="8" Padding="20" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="ClockOutline" Width="32" Height="32"
+                            Foreground="#FF9800" />
+                        <TextBlock Text="Đơn chờ duyệt" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
+                        <TextBlock Text="0" FontSize="28" FontWeight="Bold" />
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Card: Tài khoản -->
+                <materialDesign:Card Margin="8" Padding="20" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="AccountGroup" Width="32" Height="32"
+                            Foreground="#2196F3" />
+                        <TextBlock Text="Tài khoản" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
+                        <TextBlock Text="10" FontSize="28" FontWeight="Bold" />
+                    </StackPanel>
+                </materialDesign:Card>
+            </UniformGrid>
+
+            <!-- Hàng 2: Chào mừng -->
+            <materialDesign:Card Padding="32" UniformCornerRadius="12" Margin="8">
+                <StackPanel HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="HandWave" Width="48" Height="48"
+                        Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        HorizontalAlignment="Center" />
+                    <TextBlock 
+                        Text="Chào mừng đến Hệ thống Quản lý CSVC!"
+                        Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                        HorizontalAlignment="Center"
+                        Margin="0,16,0,8" />
+                    <TextBlock 
+                        Text="Chọn một mục từ menu bên trái để bắt đầu."
+                        FontSize="14" Opacity="0.6"
+                        HorizontalAlignment="Center" />
+                </StackPanel>
+            </materialDesign:Card>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

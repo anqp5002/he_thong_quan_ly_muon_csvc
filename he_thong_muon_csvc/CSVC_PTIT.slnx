@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CSVC_PTIT.App/CSVC_PTIT.App.csproj" />
+    <Project Path="src/CSVC_PTIT.Core/CSVC_PTIT.Core.csproj" />
+    <Project Path="src/CSVC_PTIT.Data/CSVC_PTIT.Data.csproj" />
+  </Folder>
+</Solution>

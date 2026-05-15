@@ -1,0 +1,228 @@
+<Window x:Class="CSVC_PTIT.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Hệ thống Quản lý mượn CSVC — PTIT HCM"
+        Height="750" Width="1200"
+        MinHeight="600" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource MaterialDesignWindow}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Sidebar cố định 260px -->
+            <ColumnDefinition Width="260" />
+            <!-- Content chiếm hết phần còn lại -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ============================================ -->
+        <!-- SIDEBAR (Cột trái)                           -->
+        <!-- ============================================ -->
+        <Border Grid.Column="0" Background="{DynamicResource PrimaryHueMidBrush}">
+            <DockPanel>
+
+                <!-- === PHẦN TRÊN: Logo + Tên hệ thống === -->
+                <StackPanel DockPanel.Dock="Top" Margin="20,24,20,0">
+                    <!-- Icon logo -->
+                    <materialDesign:PackIcon 
+                        Kind="SchoolOutline" 
+                        Width="48" Height="48"
+                        Foreground="White"
+                        HorizontalAlignment="Center" />
+
+                    <TextBlock 
+                        Text="QUẢN LÝ CSVC"
+                        FontSize="18" FontWeight="Bold"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        Margin="0,8,0,2" />
+
+                    <TextBlock 
+                        Text="PTIT HCM"
+                        FontSize="12"
+                        Foreground="#B0FFFFFF"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,16" />
+
+                    <!-- Đường kẻ ngang -->
+                    <Separator Background="#4DFFFFFF" Margin="0,0,0,8" />
+                </StackPanel>
+
+                <!-- === PHẦN DƯỚI: User info + Đăng xuất === -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="16,0,16,16">
+                    <Separator Background="#4DFFFFFF" Margin="0,0,0,12" />
+
+                    <!-- Thông tin user -->
+                    <StackPanel Orientation="Horizontal" Margin="4,0,0,8">
+                        <materialDesign:PackIcon 
+                            Kind="AccountCircle" 
+                            Width="36" Height="36" 
+                            Foreground="White" 
+                            VerticalAlignment="Center" />
+                        <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock 
+                                x:Name="TxtUserName" 
+                                Text="Admin" 
+                                FontSize="14" FontWeight="SemiBold"
+                                Foreground="White" />
+                            <TextBlock 
+                                x:Name="TxtUserRole" 
+                                Text="Quản trị viên" 
+                                FontSize="11" 
+                                Foreground="#B0FFFFFF" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Nút Đăng xuất -->
+                    <Button 
+                        Click="BtnLogout_Click"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        BorderBrush="#80FFFFFF"
+                        Foreground="White"
+                        Height="36"
+                        materialDesign:ButtonAssist.CornerRadius="8"
+                        HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Logout" VerticalAlignment="Center" />
+                            <TextBlock Text="Đăng xuất" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- === PHẦN GIỮA: Menu items === -->
+                <ListBox 
+                    x:Name="MenuList"
+                    SelectionChanged="Menu_SelectionChanged"
+                    Margin="8,8,8,0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    SelectedIndex="0">
+
+                    <ListBox.Resources>
+                        <!-- Style chung cho menu item -->
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Height" Value="48" />
+                            <Setter Property="Padding" Value="16,0" />
+                            <Setter Property="Margin" Value="0,2" />
+                            <Setter Property="materialDesign:ListBoxItemAssist.CornerRadius" Value="8" />
+                        </Style>
+                    </ListBox.Resources>
+
+                    <!-- Menu: Tổng quan -->
+                    <ListBoxItem Tag="Dashboard">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ViewDashboard" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Tổng quan" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Quản lý tài khoản -->
+                    <ListBoxItem Tag="Users">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Quản lý tài khoản" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Danh mục CSVC -->
+                    <ListBoxItem Tag="Assets">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Devices" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Danh mục CSVC" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Đơn mượn -->
+                    <ListBoxItem Tag="BorrowRequests">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="FileDocumentOutline" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Đơn mượn" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Bàn giao / Nhận trả -->
+                    <ListBoxItem Tag="Checkout">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="SwapHorizontal" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Bàn giao / Nhận trả" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Sự cố -->
+                    <ListBoxItem Tag="Incidents">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AlertCircleOutline" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Sự cố" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Cấu hình -->
+                    <ListBoxItem Tag="Settings">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CogOutline" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Cấu hình hệ thống" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                    <!-- Menu: Nhật ký -->
+                    <ListBoxItem Tag="AuditLog">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="History" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Nhật ký hoạt động" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- ============================================ -->
+        <!-- CONTENT AREA (Cột phải)                      -->
+        <!-- ============================================ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <!-- Top bar -->
+                <RowDefinition Height="56" />
+                <!-- Content -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Top bar -->
+            <Border Grid.Row="0" 
+                    BorderBrush="{DynamicResource MaterialDesignDivider}" 
+                    BorderThickness="0,0,0,1"
+                    Padding="24,0">
+                <DockPanel VerticalAlignment="Center">
+                    <TextBlock 
+                        x:Name="TxtPageTitle" 
+                        Text="Tổng quan"
+                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                        FontWeight="SemiBold"
+                        VerticalAlignment="Center" />
+
+                    <!-- Notification bell (bên phải) -->
+                    <StackPanel DockPanel.Dock="Right" 
+                                Orientation="Horizontal" 
+                                HorizontalAlignment="Right">
+                        <materialDesign:Badged Badge="3" BadgeColorZoneMode="PrimaryMid">
+                            <Button Style="{StaticResource MaterialDesignIconButton}">
+                                <materialDesign:PackIcon Kind="BellOutline" />
+                            </Button>
+                        </materialDesign:Badged>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- Vùng nội dung chính — thay đổi khi click menu -->
+            <ContentControl 
+                x:Name="MainContent" 
+                Grid.Row="1" 
+                Margin="24,16" />
+        </Grid>
+    </Grid>
+</Window>

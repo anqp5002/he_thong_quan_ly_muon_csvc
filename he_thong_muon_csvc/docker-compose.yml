@@ -1,0 +1,17 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: csvc_sqlsever
+    user: root
+    ports:
+      - "14333:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CsvcPtitCac@2026
+      - MSSQL_PID=Developer
+    volumes:
+      - csvc_data:/var/opt/mssql/data
+    restart: unless-stopped
+
+volumes:
+  csvc_data:
