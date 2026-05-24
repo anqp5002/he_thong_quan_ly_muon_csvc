@@ -20,13 +20,13 @@
                     
                     <TextBlock Text="Danh Sách Đơn Mượn Đã Được Duyệt" FontSize="20" FontWeight="Bold" Margin="0,10,0,20"/>
                     
-                    <DataGrid x:Name="GridDanhSachDon" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" SelectionChanged="GridDanhSachDon_SelectionChanged">
+                    <DataGrid x:Name="GridDanhSachDon" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" GridLinesVisibility="All" SelectionChanged="GridDanhSachDon_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Mã Đơn" Binding="{Binding RequestCode}" Width="120"/>
                             <DataGridTextColumn Header="Người Mượn" Binding="{Binding Requester.FullName}" Width="200"/>
                             <DataGridTextColumn Header="Bắt đầu" Binding="{Binding BorrowStartAt, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
                             <DataGridTextColumn Header="Dự kiến trả" Binding="{Binding ExpectedReturnAt, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
-                            <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="150"/>
+                            <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
@@ -43,12 +43,12 @@
 
                     <TextBlock Text="Đối chiếu Yêu cầu và Tồn kho" FontSize="20" FontWeight="Bold" Margin="0,10,0,20"/>
 
-                    <DataGrid x:Name="GridKiemTra" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+                    <DataGrid x:Name="GridKiemTra" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" GridLinesVisibility="All">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Tên CSVC" Binding="{Binding Asset.AssetName}" Width="250"/>
                             <DataGridTextColumn Header="SL Yêu Cầu" Binding="{Binding QuantityApproved}" Width="120"/>
                             <DataGridTextColumn Header="Tồn Kho Khả Dụng" Binding="{Binding Asset.AvailableQuantity}" Width="150"/>
-                            <DataGridTextColumn Header="Tình trạng CSVC" Binding="{Binding Asset.ConditionStatus}" Width="150"/>
+                            <DataGridTextColumn Header="Tình trạng CSVC" Binding="{Binding Asset.ConditionStatus}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     
@@ -75,11 +75,11 @@
                         <TextBlock x:Name="TxtNguoiNhan" Text="Người nhận: " VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14"/>
                     </StackPanel>
 
-                    <DataGrid x:Name="GridChiTietBanGiao" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+                    <DataGrid x:Name="GridChiTietBanGiao" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" GridLinesVisibility="All" SelectionUnit="Cell">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="CSVC" Binding="{Binding Asset.AssetName}" Width="200" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Số lượng giao" Binding="{Binding QuantityApproved}" Width="120" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Ghi nhận tình trạng (Tốt/Xước/Hỏng)" Binding="{Binding ItemNote}" Width="300"/>
+                            <DataGridTextColumn Header="Ghi nhận tình trạng (Tốt/Xước/Hỏng)" Binding="{Binding ItemNote}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
