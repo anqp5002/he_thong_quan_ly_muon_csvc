@@ -50,6 +50,7 @@ public partial class MainWindow : Window
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
+            "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(),
             // Các view khác sẽ thêm ở Sprint 1:
             // "Users" => new QuanLyTaiKhoanView(),
             // "Assets" => new DanhMucCSVCView(),
