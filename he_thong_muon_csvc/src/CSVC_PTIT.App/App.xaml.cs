@@ -61,6 +61,7 @@ public partial class App : Application
         using var scope = ServiceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<CsvcDbContext>();
         await DatabaseSeeder.SeedAsync(db);
+        await DatabaseSeederDevC.SeedDevCAsync(db); // Seed dữ liệu mẫu cho test chức năng Dev C
     }
 
     protected override void OnExit(ExitEventArgs e)
