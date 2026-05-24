@@ -24,7 +24,10 @@ public partial class MainWindow : Window
     /// </summary>
     private void Menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (MenuList.SelectedItem is not ListBoxItem selectedItem)
+        if (MenuList?.SelectedItem is not ListBoxItem selectedItem)
+            return;
+
+        if (TxtPageTitle == null || MainContent == null)
             return;
 
         var tag = selectedItem.Tag?.ToString();

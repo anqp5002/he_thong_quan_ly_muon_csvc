@@ -44,6 +44,11 @@ public partial class App : Application
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
+        
+        // --- Dev C Services ---
+        services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IReturnService, ReturnService>();
+        services.AddScoped<IDamageReportService, DamageReportService>();
 
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
