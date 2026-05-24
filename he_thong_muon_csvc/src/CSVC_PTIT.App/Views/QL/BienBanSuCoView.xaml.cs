@@ -32,13 +32,33 @@ public partial class BienBanSuCoView : UserControl
 
     private void LoadData()
     {
-        CbbRequest.ItemsSource = _context.BorrowRequests.ToList();
-        CbbAsset.ItemsSource = _context.Assets.ToList();
-        CbbUser.ItemsSource = _context.Users.ToList();
+        // Chỉ lấy những đơn mượn đang trong trạng thái hoạt động (CheckedOut - đang mượn/chưa trả xong)
+        var activeRequests = _context.BorrowRequests
+            .Include(r => r.Requester)
+            .Include(r => r.BorrowRequestAssets)
+            .ThenInclude(ra => ra.Asset)
+            .Where(r => r.Status == RequestStatus.CheckedOut)
+            .ToList();
+            
+        CbbRequest.ItemsSource = activeRequests;
 
         GridReports.ItemsSource = _context.DamageReports
             .Include(r => r.Asset)
             .ToList();
+    }
+
+    private void CbbRequest_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (CbbRequest.SelectedItem is BorrowRequest request)
+        {
+            // Tự động gán người chịu trách nhiệm (Requester) và khóa lại
+            CbbUser.ItemsSource = new List<User> { request.Requester };
+            CbbUser.SelectedItem = request.Requester;
+            CbbUser.IsEnabled = false;
+
+            // Chỉ load những tài sản thuộc về đơn mượn này
+            CbbAsset.ItemsSource = request.BorrowRequestAssets.Select(ra => ra.Asset).ToList();
+        }
     }
 
     private async void BtnCreateReport_Click(object sender, RoutedEventArgs e)

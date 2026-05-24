@@ -33,7 +33,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <ComboBox x:Name="CbbRequest" materialDesign:HintAssist.Hint="Thuộc Đơn Mượn (Mã Đơn)" Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" DisplayMemberPath="RequestCode"/>
+            <ComboBox x:Name="CbbRequest" materialDesign:HintAssist.Hint="Thuộc Đơn Mượn (Mã Đơn)" Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" DisplayMemberPath="RequestCode" SelectionChanged="CbbRequest_SelectionChanged"/>
             <ComboBox x:Name="CbbAsset" materialDesign:HintAssist.Hint="Chọn Tài Sản Sự Cố" Grid.Row="0" Grid.Column="1" Margin="0,0,10,15" DisplayMemberPath="AssetName"/>
             <ComboBox x:Name="CbbUser" materialDesign:HintAssist.Hint="Người Chịu Trách Nhiệm" Grid.Row="0" Grid.Column="2" Margin="0,0,0,15" DisplayMemberPath="FullName"/>
 

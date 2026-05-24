@@ -74,11 +74,15 @@ public class ReturnService : IReturnService
             allItemsReturned = false;
         }
 
-        if (allItemsReturned)
+        bool hasDamage = returnItems.Any(r => r.IsDamaged || r.IsLost);
+
+        // NẾU KHÔNG CÓ SỰ CỐ VÀ TRẢ ĐỦ -> Hoàn tất đơn
+        if (allItemsReturned && !hasDamage)
         {
             request.Status = RequestStatus.Returned;
             request.ActualReturnAt = returnObj.ReturnedAt;
         }
+        // NẾU CÓ SỰ CỐ -> Hold đơn lại (vẫn giữ trạng thái CheckedOut hoặc không đổi sang Returned)
 
         _context.Returns.Add(returnObj);
         await _context.SaveChangesAsync();

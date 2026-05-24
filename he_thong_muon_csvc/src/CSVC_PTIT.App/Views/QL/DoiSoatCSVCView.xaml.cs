@@ -93,7 +93,15 @@ public partial class DoiSoatCSVCView : UserControl
                 var returnObj = await _returnService.CreateReturnAsync(selected.CheckoutId, 1, TxtGhiChuTra.Text, dtoList);
                 _lastReturnId = returnObj.ReturnId;
 
-                MessageBox.Show("Đã nhận trả CSVC thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+                bool hasDamage = dtoList.Any(d => d.IsDamaged || d.IsLost);
+                if (hasDamage)
+                {
+                    MessageBox.Show("Phát hiện có thiết bị hỏng/mất! Hệ thống đã HOLD (tạm giữ) đơn mượn này. Vui lòng sang mục 'Sự cố' để lập biên bản và thông báo trạng thái thiết bị hỏng.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    // "không có thông báo gì thêm" (không show MessageBox thành công, chỉ reset UI)
+                }
                 
                 BtnInPhieuTra.IsEnabled = true;
                 BtnHoanTatTra.IsEnabled = false;
