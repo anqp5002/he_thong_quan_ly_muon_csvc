@@ -32,6 +32,7 @@ public partial class BienBanSuCoView : UserControl
 
     private void LoadData()
     {
+        CbbRequest.ItemsSource = _context.BorrowRequests.ToList();
         CbbAsset.ItemsSource = _context.Assets.ToList();
         CbbUser.ItemsSource = _context.Users.ToList();
 
@@ -42,7 +43,7 @@ public partial class BienBanSuCoView : UserControl
 
     private async void BtnCreateReport_Click(object sender, RoutedEventArgs e)
     {
-        if (CbbAsset.SelectedItem is Asset asset && CbbUser.SelectedItem is User user)
+        if (CbbRequest.SelectedItem is BorrowRequest request && CbbAsset.SelectedItem is Asset asset && CbbUser.SelectedItem is User user)
         {
             try
             {
@@ -53,7 +54,7 @@ public partial class BienBanSuCoView : UserControl
 
                 var dto = new DamageReportDto
                 {
-                    RequestId = 0, // Should link to request but 0 for demo if standalone
+                    RequestId = request.RequestId, // Lấy ID thực tế từ combobox
                     AssetId = asset.AssetId,
                     ResponsibleUserId = user.UserId,
                     IncidentType = Enum.Parse<IncidentType>(incidentTypeStr),
@@ -72,12 +73,12 @@ public partial class BienBanSuCoView : UserControl
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi tạo biên bản: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Lỗi tạo biên bản: {ex.Message}{(ex.InnerException != null ? " (" + ex.InnerException.Message + ")" : "")}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         else
         {
-            MessageBox.Show("Vui lòng chọn Tài sản và Người chịu trách nhiệm.", "Chú ý", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show("Vui lòng chọn Đơn mượn, Tài sản và Người chịu trách nhiệm.", "Chú ý", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
