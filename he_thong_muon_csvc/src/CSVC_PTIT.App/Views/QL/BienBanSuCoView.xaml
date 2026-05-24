@@ -66,7 +66,7 @@
                 <DataGridTextColumn Header="Loại Sự Cố" Binding="{Binding IncidentType}" Width="100"/>
                 <DataGridTextColumn Header="Mức Độ" Binding="{Binding Severity}" Width="100"/>
                 <DataGridTextColumn Header="Bồi Thường (VNĐ)" Binding="{Binding EstimatedCompensation, StringFormat=\{0:N0\}}" Width="150"/>
-                <DataGridTextColumn Header="Trạng Thái" Binding="{Binding Status}" Width="100"/>
+                <DataGridTextColumn Header="Trạng Thái" Binding="{Binding Status}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -27,14 +27,14 @@
             <Button Content="Lọc Dữ Liệu" Style="{StaticResource MaterialDesignOutlinedButton}" Click="BtnFilter_Click"/>
         </StackPanel>
 
-        <DataGrid x:Name="GridAssets" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid x:Name="GridAssets" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="False" IsReadOnly="True" GridLinesVisibility="All">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Mã CSVC" Binding="{Binding AssetCode}" Width="150" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Tên CSVC" Binding="{Binding AssetName}" Width="250" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Phân Loại" Binding="{Binding Category.CategoryName}" Width="150" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Tổng Số Lượng" Binding="{Binding TotalQuantity}" Width="150" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Khả Dụng" Binding="{Binding AvailableQuantity}" Width="150" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Tình Trạng Vật Lý" Binding="{Binding ConditionStatus}" Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Tình Trạng Vật Lý" Binding="{Binding ConditionStatus}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 

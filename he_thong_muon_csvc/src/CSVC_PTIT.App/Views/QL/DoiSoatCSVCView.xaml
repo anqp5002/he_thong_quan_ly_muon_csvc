@@ -29,7 +29,7 @@
             <TextBox x:Name="TxtGhiChuTra" materialDesign:HintAssist.Hint="Ghi chú khi trả" Width="300" Margin="0,0,20,0"/>
         </StackPanel>
 
-        <DataGrid x:Name="GridChiTietTra" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid x:Name="GridChiTietTra" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="False" GridLinesVisibility="All" SelectionUnit="Cell">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="CSVC" Binding="{Binding Asset.AssetName}" Width="200" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Số lượng đã giao" Binding="{Binding Quantity}" Width="150" IsReadOnly="True"/>
@@ -50,7 +50,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Ghi chú hư hỏng" Binding="{Binding DamageNote}" Width="200"/>
+                <DataGridTextColumn Header="Ghi chú hư hỏng" Binding="{Binding DamageNote}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 
