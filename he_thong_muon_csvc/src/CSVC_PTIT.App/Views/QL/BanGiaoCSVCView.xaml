@@ -5,30 +5,90 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
-    <Grid Background="White">
-        <StackPanel Margin="20">
-            <TextBlock Text="Bàn Giao Cơ Sở Vật Chất (Dev C - Sprint 1)" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-            
-            <TextBlock Text="Danh sách các đơn đã duyệt chờ bàn giao:" FontSize="16" Margin="0,0,0,10"/>
-            
-            <DataGrid x:Name="GridDonMuon" AutoGenerateColumns="False" CanUserAddRows="False" 
-                      Height="200" Margin="0,0,0,20">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Mã Đơn" Binding="{Binding RequestCode}" Width="100"/>
-                    <DataGridTextColumn Header="Người Mượn" Binding="{Binding Requester.FullName}" Width="200"/>
-                    <DataGridTextColumn Header="Ngày Mượn" Binding="{Binding BorrowStartAt, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
-                    <DataGridTextColumn Header="Trạng Thái" Binding="{Binding Status}" Width="150"/>
-                </DataGrid.Columns>
-            </DataGrid>
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="{DynamicResource MaterialDesignPaper}">
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button x:Name="BtnCreateCheckout" Content="Tạo Phiếu Bàn Giao" 
-                        Click="BtnCreateCheckout_Click" Margin="0,0,10,0"/>
-                <Button x:Name="BtnExportPdf" Content="Xuất PDF Biên Bản (Demo Sprint 3)" 
-                        Click="BtnExportPdf_Click" 
-                        Style="{StaticResource MaterialDesignOutlinedButton}"/>
-            </StackPanel>
-        </StackPanel>
+    <Grid Margin="20">
+        <TabControl materialDesign:ColorZoneAssist.Mode="PrimaryMid" Style="{StaticResource MaterialDesignFilledTabControl}">
+            <!-- TAB 1: Danh sách đơn đã duyệt (C.1) -->
+            <TabItem Header="1. Danh sách đơn chờ bàn giao">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Text="Danh Sách Đơn Mượn Đã Được Duyệt" FontSize="20" FontWeight="Bold" Margin="0,10,0,20"/>
+                    
+                    <DataGrid x:Name="GridDanhSachDon" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" SelectionChanged="GridDanhSachDon_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Mã Đơn" Binding="{Binding RequestCode}" Width="120"/>
+                            <DataGridTextColumn Header="Người Mượn" Binding="{Binding Requester.FullName}" Width="200"/>
+                            <DataGridTextColumn Header="Bắt đầu" Binding="{Binding BorrowStartAt, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
+                            <DataGridTextColumn Header="Dự kiến trả" Binding="{Binding ExpectedReturnAt, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
+                            <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="150"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: Kiểm tra tồn kho (C.2) -->
+            <TabItem Header="2. Kiểm tra vật tư khả dụng" x:Name="TabKiemTra">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Đối chiếu Yêu cầu và Tồn kho" FontSize="20" FontWeight="Bold" Margin="0,10,0,20"/>
+
+                    <DataGrid x:Name="GridKiemTra" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Tên CSVC" Binding="{Binding Asset.AssetName}" Width="250"/>
+                            <DataGridTextColumn Header="SL Yêu Cầu" Binding="{Binding QuantityApproved}" Width="120"/>
+                            <DataGridTextColumn Header="Tồn Kho Khả Dụng" Binding="{Binding Asset.AvailableQuantity}" Width="150"/>
+                            <DataGridTextColumn Header="Tình trạng CSVC" Binding="{Binding Asset.ConditionStatus}" Width="150"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button x:Name="BtnKiemTraHopLe" Content="Xác nhận &amp; Chuyển sang Bàn Giao" Click="BtnKiemTraHopLe_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 3: Phiếu bàn giao (C.4) -->
+            <TabItem Header="3. Tạo phiếu bàn giao" x:Name="TabPhieuBanGiao">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Biểu mẫu Bàn Giao (QL_BM03)" FontSize="20" FontWeight="Bold" Margin="0,10,0,20"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+                        <TextBox x:Name="TxtGhiChuBanGiao" materialDesign:HintAssist.Hint="Ghi chú bàn giao (Tùy chọn)" Width="400" Margin="0,0,20,0"/>
+                        <TextBlock x:Name="TxtNguoiNhan" Text="Người nhận: " VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="GridChiTietBanGiao" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="CSVC" Binding="{Binding Asset.AssetName}" Width="200" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Số lượng giao" Binding="{Binding QuantityApproved}" Width="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Ghi nhận tình trạng (Tốt/Xước/Hỏng)" Binding="{Binding ItemNote}" Width="300"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button x:Name="BtnHoanTatBanGiao" Content="Hoàn Tất Bàn Giao" Click="BtnHoanTatBanGiao_Click" Margin="0,0,10,0"/>
+                        <Button x:Name="BtnInPhieu" Content="In Phiếu PDF" Style="{StaticResource MaterialDesignOutlinedButton}" Click="BtnInPhieu_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

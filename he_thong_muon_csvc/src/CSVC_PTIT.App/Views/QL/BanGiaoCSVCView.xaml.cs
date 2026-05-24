@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using CSVC_PTIT.Core.Interfaces;
 using CSVC_PTIT.Data;
+using CSVC_PTIT.Data.Entities;
 using CSVC_PTIT.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,11 +17,13 @@ public partial class BanGiaoCSVCView : UserControl
     private readonly IReportService _reportService;
     private readonly CsvcDbContext _context;
 
+    private BorrowRequest? _selectedRequest;
+    private int _lastCheckoutId = 0;
+
     public BanGiaoCSVCView()
     {
         InitializeComponent();
         
-        // Resolve services from DI Container
         _checkoutService = App.ServiceProvider.GetRequiredService<ICheckoutService>();
         _reportService = App.ServiceProvider.GetRequiredService<IReportService>();
         _context = App.ServiceProvider.GetRequiredService<CsvcDbContext>();
@@ -30,63 +33,111 @@ public partial class BanGiaoCSVCView : UserControl
 
     private void LoadData()
     {
+        // Tải danh sách đơn đã duyệt (C.1)
         var requests = _context.BorrowRequests
             .Include(r => r.Requester)
-            .Where(r => r.Status == RequestStatus.Approved || r.Status == RequestStatus.CheckedOut)
+            .Include(r => r.BorrowRequestAssets)
+            .ThenInclude(ra => ra.Asset)
+            .Where(r => r.Status == RequestStatus.Approved)
             .ToList();
         
-        GridDonMuon.ItemsSource = requests;
+        GridDanhSachDon.ItemsSource = requests;
     }
 
-    private async void BtnCreateCheckout_Click(object sender, RoutedEventArgs e)
+    // Chuyển dữ liệu sang Tab 2 (Kiểm tra khả dụng)
+    private void GridDanhSachDon_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (GridDonMuon.SelectedItem is CSVC_PTIT.Data.Entities.BorrowRequest selected)
+        if (GridDanhSachDon.SelectedItem is BorrowRequest selected)
         {
-            try
-            {
-                if (selected.Status == RequestStatus.CheckedOut)
-                {
-                    MessageBox.Show("Đơn này đã được bàn giao rồi!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                // Call Core Service (Sprint 1)
-                var conditions = new Dictionary<int, string>(); // Default conditions
-                await _checkoutService.CreateCheckoutAsync(selected.RequestId, 1 /* Admin ID */, "Bàn giao tự động", conditions);
-                
-                MessageBox.Show("Tạo phiếu bàn giao thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-                LoadData();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        else
-        {
-            MessageBox.Show("Vui lòng chọn một đơn mượn để bàn giao.", "Chú ý", MessageBoxButton.OK, MessageBoxImage.Warning);
+            _selectedRequest = selected;
+            // Hiển thị danh sách tài sản yêu cầu kèm tồn kho hiện tại (C.2)
+            GridKiemTra.ItemsSource = selected.BorrowRequestAssets;
         }
     }
 
-    private async void BtnExportPdf_Click(object sender, RoutedEventArgs e)
+    // Nút xác nhận kiểm tra
+    private void BtnKiemTraHopLe_Click(object sender, RoutedEventArgs e)
     {
+        if (_selectedRequest == null)
+        {
+            MessageBox.Show("Vui lòng chọn đơn ở Tab 1 trước.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        // Kiểm tra logic tồn kho
+        bool isValid = true;
+        foreach (var reqAsset in _selectedRequest.BorrowRequestAssets)
+        {
+            if (reqAsset.QuantityApproved > reqAsset.Asset.AvailableQuantity)
+            {
+                isValid = false;
+                MessageBox.Show($"Tài sản {reqAsset.Asset.AssetName} không đủ số lượng tồn kho!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                break;
+            }
+        }
+
+        if (isValid)
+        {
+            // Chuyển sang Tab 3
+            TxtNguoiNhan.Text = $"Người nhận: {_selectedRequest.Requester.FullName} - {_selectedRequest.Requester.Phone}";
+            GridChiTietBanGiao.ItemsSource = _selectedRequest.BorrowRequestAssets;
+            ((TabItem)this.FindName("TabPhieuBanGiao")).IsSelected = true;
+        }
+    }
+
+    // Hoàn tất bàn giao (C.3 & C.4)
+    private async void BtnHoanTatBanGiao_Click(object sender, RoutedEventArgs e)
+    {
+        if (_selectedRequest == null) return;
+
         try
         {
-            // Call Core Service (Sprint 3)
-            // Cứ tạo báo cáo tồn kho để demo Sprint 3
-            var pdfBytes = await _reportService.GenerateInventoryReportPdfAsync();
+            var conditions = new Dictionary<int, string>();
+            foreach (var reqAsset in _selectedRequest.BorrowRequestAssets)
+            {
+                // Lấy ghi chú tình trạng từ DataGrid (cột ItemNote)
+                string condition = string.IsNullOrWhiteSpace(reqAsset.ItemNote) ? "Tốt" : reqAsset.ItemNote;
+                conditions[reqAsset.Asset.AssetId] = condition;
+            }
+
+            var checkout = await _checkoutService.CreateCheckoutAsync(
+                _selectedRequest.RequestId, 
+                1 /* Thay bằng ID admin đang đăng nhập */, 
+                TxtGhiChuBanGiao.Text, 
+                conditions);
             
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "BaoCaoTonKho.pdf");
+            _lastCheckoutId = checkout.CheckoutId;
+            MessageBox.Show("Đã hoàn tất bàn giao và trừ tồn kho thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            BtnInPhieu.IsEnabled = true;
+            BtnHoanTatBanGiao.IsEnabled = false;
+            
+            // Reload lại danh sách đơn chờ
+            LoadData();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi bàn giao: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    // In phiếu bàn giao (C.10)
+    private async void BtnInPhieu_Click(object sender, RoutedEventArgs e)
+    {
+        if (_lastCheckoutId == 0) return;
+
+        try
+        {
+            var pdfBytes = await _reportService.GenerateCheckoutPdfAsync(_lastCheckoutId);
+            
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"PhieuBanGiao_BG_{_lastCheckoutId}.pdf");
             File.WriteAllBytes(path, pdfBytes);
             
-            MessageBox.Show($"Đã xuất PDF thành công tại: {path}", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
-            
-            // Mở file PDF lên
             Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Lỗi xuất PDF: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Lỗi in phiếu PDF: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
