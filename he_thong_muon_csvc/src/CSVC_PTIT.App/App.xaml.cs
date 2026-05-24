@@ -49,6 +49,7 @@ public partial class App : Application
         services.AddScoped<ICheckoutService, CheckoutService>();
         services.AddScoped<IReturnService, ReturnService>();
         services.AddScoped<IDamageReportService, DamageReportService>();
+        services.AddScoped<IReportService, ReportService>();
 
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
