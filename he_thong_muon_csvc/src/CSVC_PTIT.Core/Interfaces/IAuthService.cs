@@ -4,12 +4,15 @@ namespace CSVC_PTIT.Core.Interfaces;
 
 /// <summary>
 /// Hợp đồng cho dịch vụ xác thực (đăng nhập/đăng xuất).
-/// Sprint 1 — Task A.1 sẽ code logic thật.
+/// Sprint 1 — Task A.1
 /// </summary>
 public interface IAuthService
 {
     /// <summary>Đăng nhập bằng email + password</summary>
     Task<User?> LoginAsync(string email, string password);
+
+    /// <summary>Đổi mật khẩu</summary>
+    Task ChangePasswordAsync(int userId, string oldPassword, string newPassword);
 
     /// <summary>Đăng xuất — xóa session</summary>
     void Logout();
@@ -19,4 +22,10 @@ public interface IAuthService
 
     /// <summary>Kiểm tra đã đăng nhập chưa</summary>
     bool IsLoggedIn { get; }
+
+    /// <summary>Số lần đăng nhập sai</summary>
+    int FailedLoginAttempts { get; }
+
+    /// <summary>Thời điểm hết hạn khóa tài khoản tạm thời</summary>
+    DateTime? LockoutEndTime { get; }
 }

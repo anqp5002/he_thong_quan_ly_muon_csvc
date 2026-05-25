@@ -1,6 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
+using CSVC_PTIT.App.ViewModels;
 using CSVC_PTIT.App.Views;
+using CSVC_PTIT.Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CSVC_PTIT.App;
 
@@ -10,12 +13,53 @@ namespace CSVC_PTIT.App;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private readonly IAuthService _authService;
+
     public MainWindow()
     {
         InitializeComponent();
+        _authService = App.ServiceProvider.GetRequiredService<IAuthService>();
+        
+        SetupAuthUI();
 
         // Mặc định hiển thị Dashboard khi app mở
         MainContent.Content = new DashboardView();
+    }
+
+    private void SetupAuthUI()
+    {
+        var user = _authService.CurrentUser;
+        if (user == null) return;
+
+        TxtUserName.Text = user.FullName;
+        TxtUserRole.Text = user.Role?.RoleName ?? "Chưa rõ";
+
+        // Logic ẩn/hiện menu dựa vào role (tạm ẩn các item bằng cách duyệt tag)
+        var roleCode = user.Role?.RoleCode;
+
+        foreach (var item in MenuList.Items)
+        {
+            if (item is ListBoxItem listBoxItem)
+            {
+                var tag = listBoxItem.Tag?.ToString();
+                if (roleCode == "SV" || roleCode == "DT") // Sinh viên, Đoàn thể
+                {
+                    // Chỉ xem Tổng quan, Đơn mượn, Sự cố
+                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog" || tag == "Assets" || tag == "Checkout")
+                    {
+                        listBoxItem.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else if (roleCode == "QL") // Quản lý
+                {
+                    // Không xem User, Config, AuditLog
+                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog")
+                    {
+                        listBoxItem.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -24,6 +68,10 @@ public partial class MainWindow : Window
     /// </summary>
     private void Menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        // Guard: XAML kích hoạt sự kiện này trước khi InitializeComponent() hoàn tất
+        if (TxtPageTitle is null || MainContent is null)
+            return;
+
         if (MenuList.SelectedItem is not ListBoxItem selectedItem)
             return;
 
@@ -47,16 +95,22 @@ public partial class MainWindow : Window
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
-            // Các view khác sẽ thêm ở Sprint 1:
-            // "Users" => new QuanLyTaiKhoanView(),
-            // "Assets" => new DanhMucCSVCView(),
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }
 
+    private void BtnChangePassword_Click(object sender, RoutedEventArgs e)
+    {
+        var vm = App.ServiceProvider.GetRequiredService<ChangePasswordViewModel>();
+        var dialog = new ChangePasswordView(vm)
+        {
+            Owner = this
+        };
+        dialog.ShowDialog();
+    }
+
     /// <summary>
     /// Xử lý nút Đăng xuất.
-    /// Sprint 1 sẽ thêm logic: clear session, quay về LoginView.
     /// </summary>
     private void BtnLogout_Click(object sender, RoutedEventArgs e)
     {
@@ -68,9 +122,13 @@ public partial class MainWindow : Window
 
         if (result == MessageBoxResult.Yes)
         {
-            // TODO Sprint 1: AuthService.Logout() + mở LoginView
-            MessageBox.Show("Chức năng đăng xuất sẽ được hoàn thiện ở Sprint 1.",
-                "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            _authService.Logout();
+            
+            var loginVm = App.ServiceProvider.GetRequiredService<LoginViewModel>();
+            var loginView = new LoginView(loginVm);
+            loginView.Show();
+            
+            this.Close();
         }
     }
 }

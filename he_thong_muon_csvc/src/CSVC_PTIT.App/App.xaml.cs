@@ -41,13 +41,15 @@ public partial class App : Application
             options.UseSqlServer(ConnectionString));
 
         // === TẦNG CORE: Business Services ===
-        services.AddScoped<IAuthService, AuthService>();
+        services.AddSingleton<IAuthService, AuthService>(); // Auth dùng chung
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
 
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<LoginViewModel>();
+        services.AddTransient<ChangePasswordViewModel>();
 
         ServiceProvider = services.BuildServiceProvider();
 
@@ -55,6 +57,21 @@ public partial class App : Application
         using var scope = ServiceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<CsvcDbContext>();
         await DatabaseSeeder.SeedAsync(db);
+
+        // Mở cửa sổ đăng nhập trước
+        var loginVm = ServiceProvider.GetRequiredService<LoginViewModel>();
+        var loginView = new Views.LoginView(loginVm);
+        
+        if (loginView.ShowDialog() == true)
+        {
+            // Nếu login thành công, mở MainWindow
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+        else
+        {
+            Shutdown();
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)

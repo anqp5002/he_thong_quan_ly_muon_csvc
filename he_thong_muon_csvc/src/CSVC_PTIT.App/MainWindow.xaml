@@ -22,7 +22,7 @@
         <!-- ============================================ -->
         <!-- SIDEBAR (Cột trái)                           -->
         <!-- ============================================ -->
-        <Border Grid.Column="0" Background="{DynamicResource PrimaryHueMidBrush}">
+        <Border Grid.Column="0" Background="{DynamicResource MaterialDesign.Brush.Primary}">
             <DockPanel>
 
                 <!-- === PHẦN TRÊN: Logo + Tên hệ thống === -->
@@ -34,7 +34,7 @@
                         Foreground="White"
                         HorizontalAlignment="Center" />
 
-                    <TextBlock 
+                    <TextBlock
                         Text="QUẢN LÝ CSVC"
                         FontSize="18" FontWeight="Bold"
                         Foreground="White"
@@ -76,6 +76,22 @@
                                 Foreground="#B0FFFFFF" />
                         </StackPanel>
                     </StackPanel>
+
+                    <!-- Nút Đổi mật khẩu -->
+                    <Button 
+                        Click="BtnChangePassword_Click"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        BorderBrush="#80FFFFFF"
+                        Foreground="White"
+                        Height="36"
+                        Margin="0,0,0,8"
+                        materialDesign:ButtonAssist.CornerRadius="8"
+                        HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Key" VerticalAlignment="Center" />
+                            <TextBlock Text="Đổi mật khẩu" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
 
                     <!-- Nút Đăng xuất -->
                     <Button 
