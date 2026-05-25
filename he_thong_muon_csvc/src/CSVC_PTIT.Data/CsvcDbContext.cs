@@ -36,6 +36,10 @@ public class CsvcDbContext : DbContext
     // ===== Nhóm 5: Damage Reports =====
     public DbSet<DamageReport> DamageReports { get; set; }
 
+    // ===== Nhóm 6: System & Logs =====
+    public DbSet<AuditLog> AuditLogs { get; set; }
+    public DbSet<SystemConfig> SystemConfigs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

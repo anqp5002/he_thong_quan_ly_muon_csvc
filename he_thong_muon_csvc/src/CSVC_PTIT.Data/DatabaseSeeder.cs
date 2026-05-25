@@ -250,6 +250,14 @@ public static class DatabaseSeeder
         };
         context.Assets.AddRange(assets);
 
+        var configs = new List<SystemConfig> 
+        {
+            new SystemConfig { ConfigKey = "max_borrow_hours", ConfigValue = "8", Description = "Số giờ mượn tối đa cho sinh viên" },
+            new SystemConfig { ConfigKey = "max_items_per_request", ConfigValue = "10", Description = "Số lượng thiết bị tối đa mỗi phiếu" },
+            new SystemConfig { ConfigKey = "overdue_notify_minutes", ConfigValue = "30", Description = "Báo trước khi quá hạn (phút)" }
+        };
+        context.SystemConfigs.AddRange(configs);
+
         await context.SaveChangesAsync();
     }
 }
