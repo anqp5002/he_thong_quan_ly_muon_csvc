@@ -111,4 +111,23 @@ public class BorrowService : IBorrowService
 
         return request;
     }
+    public async Task DuyetDonAsync(int requestId)
+    {
+        var request = await _context.BorrowRequests.FindAsync(requestId);
+        if (request == null) return;
+
+        request.Status = RequestStatus.Approved;
+        request.ApprovedAt = DateTime.Now;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task TuChoiDonAsync(int requestId, string lyDo)
+    {
+        var request = await _context.BorrowRequests.FindAsync(requestId);
+        if (request == null) return;
+
+        request.Status = RequestStatus.Rejected;
+        request.RejectReason = lyDo;
+        await _context.SaveChangesAsync();
+    }
 }
