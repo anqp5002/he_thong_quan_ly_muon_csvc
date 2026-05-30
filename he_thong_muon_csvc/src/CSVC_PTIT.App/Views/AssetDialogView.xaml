@@ -1,0 +1,86 @@
+<Window x:Class="CSVC_PTIT.App.Views.AssetDialogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Thông tin CSVC" Height="620" Width="480"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{materialDesign:MaterialDesignFont}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <TextBlock x:Name="TxtDialogTitle" Text="THÊM CSVC" FontSize="20" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,0,0,20"
+                       Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+
+            <TextBox x:Name="TxtAssetCode"
+                     materialDesign:HintAssist.Hint="Mã CSVC * (VD: MC-001)"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+
+            <TextBox x:Name="TxtAssetName"
+                     materialDesign:HintAssist.Hint="Tên CSVC *"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+
+            <ComboBox x:Name="CmbCategory"
+                      materialDesign:HintAssist.Hint="Loại CSVC *"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      DisplayMemberPath="CategoryName" SelectedValuePath="CategoryId"
+                      Margin="0,0,0,12"/>
+
+            <ComboBox x:Name="CmbManagementMode"
+                      materialDesign:HintAssist.Hint="Chế độ quản lý"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,12"/>
+
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="TxtTotalQty" Grid.Column="0"
+                         materialDesign:HintAssist.Hint="SL tổng"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                <TextBox x:Name="TxtAvailableQty" Grid.Column="2"
+                         materialDesign:HintAssist.Hint="SL khả dụng"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+            </Grid>
+
+            <TextBox x:Name="TxtUnit"
+                     materialDesign:HintAssist.Hint="Đơn vị (cái, bộ, phòng...)"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+
+            <TextBox x:Name="TxtBrand"
+                     materialDesign:HintAssist.Hint="Hãng / Thương hiệu"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,12"/>
+
+            <ComboBox x:Name="CmbCondition"
+                      materialDesign:HintAssist.Hint="Tình trạng"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,12"/>
+
+            <ComboBox x:Name="CmbRoom"
+                      materialDesign:HintAssist.Hint="Vị trí (phòng)"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      DisplayMemberPath="RoomName" SelectedValuePath="RoomId"
+                      Margin="0,0,0,12"
+                      materialDesign:TextFieldAssist.HasClearButton="True"/>
+
+            <TextBox x:Name="TxtDescription"
+                     materialDesign:HintAssist.Hint="Mô tả"
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                     AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60"
+                     Margin="0,0,0,16"/>
+
+            <TextBlock x:Name="TxtError" Foreground="Red" TextWrapping="Wrap"
+                       Margin="0,0,0,12" Visibility="Collapsed"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="HỦY"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" Click="BtnCancel_Click"/>
+                <Button Grid.Column="2" Content="LƯU"
+                        Style="{StaticResource MaterialDesignRaisedButton}" Click="BtnSave_Click"/>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -13,6 +13,10 @@ public partial class ViewModelBase : ObservableObject
     [ObservableProperty]
     private bool _isLoading;
 
+    /// <summary>Trạng thái đang xử lý (disable nút)</summary>
+    [ObservableProperty]
+    private bool _isBusy;
+
     /// <summary>Thông báo lỗi (nếu có)</summary>
     [ObservableProperty]
     private string? _errorMessage;

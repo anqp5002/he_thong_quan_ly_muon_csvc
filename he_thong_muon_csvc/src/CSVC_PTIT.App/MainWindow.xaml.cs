@@ -95,6 +95,10 @@ public partial class MainWindow : Window
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
+            "Users" => new QuanLyTaiKhoanView(),       // Sprint 1 — A.5
+            "Assets" => new DanhMucCSVCView(),          // Sprint 1 — A.7
+            "Settings" => new CauHinhHeThongView(),     // Sprint 1 — A.8
+            "AuditLog" => new NhatKyView(),             // Sprint 1 — A.9
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }

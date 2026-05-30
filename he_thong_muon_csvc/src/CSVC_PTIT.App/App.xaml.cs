@@ -44,12 +44,17 @@ public partial class App : Application
         services.AddSingleton<IAuthService, AuthService>(); // Auth dùng chung
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IAuditLogService, AuditLogService>(); // Sprint 1 — A.9
 
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
         services.AddTransient<DashboardViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<ChangePasswordViewModel>();
+        services.AddTransient<QuanLyTaiKhoanViewModel>();  // Sprint 1 — A.5
+        services.AddTransient<DanhMucCSVCViewModel>();      // Sprint 1 — A.7
+        services.AddTransient<CauHinhHeThongViewModel>();   // Sprint 1 — A.8
+        services.AddTransient<NhatKyViewModel>();           // Sprint 1 — A.9
 
         ServiceProvider = services.BuildServiceProvider();
 
