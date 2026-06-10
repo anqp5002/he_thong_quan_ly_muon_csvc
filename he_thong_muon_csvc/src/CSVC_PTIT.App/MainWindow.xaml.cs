@@ -88,6 +88,7 @@ public partial class MainWindow : Window
             "Incidents" => "Sự cố",
             "Settings" => "Cấu hình hệ thống",
             "AuditLog" => "Nhật ký hoạt động",
+            "TraCuu" => "Tra cứu CSVC",
             _ => "Tổng quan"
         };
 
@@ -99,6 +100,7 @@ public partial class MainWindow : Window
             "Assets" => new DanhMucCSVCView(),          // Sprint 1 — A.7
             "Settings" => new CauHinhHeThongView(),     // Sprint 1 — A.8
             "AuditLog" => new NhatKyView(),             // Sprint 1 — A.9
+            "TraCuu" => new Views.SV.TraCuuCSVCView(),  // Sprint 1 — B.1
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }
