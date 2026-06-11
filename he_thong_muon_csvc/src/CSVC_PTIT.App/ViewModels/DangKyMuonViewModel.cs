@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CSVC_PTIT.Core.DTOs;
 using CSVC_PTIT.Core.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace CSVC_PTIT.App.ViewModels.SV;
 
@@ -86,8 +86,33 @@ public partial class DangKyMuonViewModel : ObservableObject
             Assets = DanhSachCsvc.ToList()
         };
 
-        await _borrowService.CreateInClassRequestAsync(dto);
-        ThongBao = "Gửi đơn thành công!";
+        DonVuaTao = await _borrowService.CreateInClassRequestAsync(dto);
+        ThongBao = $"Gửi đơn thành công! Mã đơn: {DonVuaTao?.RequestCode}. Bạn có thể xuất PDF ngay bây giờ.";
         DangXuLy = false;
+    }
+    // Đơn vừa tạo (dùng để xuất PDF)
+    [ObservableProperty] private CSVC_PTIT.Data.Entities.BorrowRequest? _donVuaTao;
+
+    [RelayCommand]
+    private void XuatPdf()
+    {
+        if (DonVuaTao == null)
+        {
+            ThongBao = "Chưa có đơn để xuất PDF. Vui lòng gửi đơn trước!";
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            FileName = $"PhieuMuon_{DonVuaTao.RequestCode}",
+            DefaultExt = ".pdf",
+            Filter = "PDF files (*.pdf)|*.pdf"
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            CSVC_PTIT.Core.Services.PhieuMuonTrongGioPdf.GenerateToFile(DonVuaTao, dialog.FileName);
+            ThongBao = $"Xuất PDF thành công: {dialog.FileName}";
+        }
     }
 }

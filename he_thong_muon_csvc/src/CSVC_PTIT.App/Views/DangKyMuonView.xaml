@@ -123,22 +123,28 @@
                 </StackPanel>
             </GroupBox>
 
-            <!-- Ghi chú + Gửi đơn -->
-            <StackPanel Grid.Row="4">
-                <TextBox Margin="0,0,0,16"
-                         Text="{Binding GhiChu, UpdateSourceTrigger=PropertyChanged}"
-                         materialDesign:HintAssist.Hint="Ghi chú"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         AcceptsReturn="True" Height="80"/>
+           <!-- Ghi chú + Gửi đơn -->
+<StackPanel Grid.Row="4">
+    <TextBox Margin="0,0,0,16"
+             Text="{Binding GhiChu, UpdateSourceTrigger=PropertyChanged}"
+             materialDesign:HintAssist.Hint="Ghi chú"
+             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+             AcceptsReturn="True" Height="80"/>
 
-                <TextBlock Text="{Binding ThongBao}" Foreground="Green"
-                           Margin="0,0,0,8" FontWeight="Bold"/>
+    <TextBlock Text="{Binding ThongBao}" Foreground="Green"
+               Margin="0,0,0,8" FontWeight="Bold"/>
 
-                <Button Content="Gửi đơn mượn"
-                        Command="{Binding GuiDonCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        HorizontalAlignment="Right"
-                        IsEnabled="True"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Gửi đơn mượn"
+                Command="{Binding GuiDonCommand}"
+                Style="{StaticResource MaterialDesignRaisedButton}"
+                Margin="0,0,12,0" />
+
+                    <Button Content="Xuất PDF"
+                Command="{Binding XuatPdfCommand}"
+                Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                </StackPanel>
+
             </StackPanel>
 
         </Grid>
