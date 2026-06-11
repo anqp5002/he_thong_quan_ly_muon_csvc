@@ -152,10 +152,16 @@
                 <TextBlock Text="{Binding ThongBao}" Foreground="Green"
                            Margin="0,0,0,8" FontWeight="Bold"/>
 
-                <Button Content="Gửi đơn mượn ngoài giờ"
-                        Command="{Binding GuiDonCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        HorizontalAlignment="Right"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Gửi đơn mượn ngoài giờ"
+                            Command="{Binding GuiDonCommand}"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Margin="0,0,12,0" />
+
+                    <Button Content="Xuất PDF"
+                            Command="{Binding XuatPdfCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                </StackPanel>
             </StackPanel>
 
         </Grid>
