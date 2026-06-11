@@ -1,0 +1,163 @@
+﻿<Window x:Class="CSVC_PTIT.App.Views.DT.TaoDonNgoaiGioView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Tạo Đơn Mượn CSVC Ngoài Giờ" Height="750" Width="900">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Tiêu đề -->
+            <TextBlock Grid.Row="0" Text="Đơn Mượn CSVC Ngoài Giờ"
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                       Margin="0,0,0,16"/>
+
+            <!-- Thông tin người gửi -->
+            <GroupBox Grid.Row="1" Header="Thông tin người gửi"
+                      Style="{StaticResource MaterialDesignGroupBox}"
+                      Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" Grid.Column="0" Margin="8"
+                             Text="{Binding HoTen, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Họ và tên *"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="8"
+                             Text="{Binding ChucVu, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Chức vụ"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Row="1" Grid.Column="0" Margin="8"
+                             Text="{Binding DonVi, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Đơn vị *"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="8"
+                             Text="{Binding SoDienThoai, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Số điện thoại"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Thông tin sự kiện -->
+            <GroupBox Grid.Row="2" Header="Thông tin sự kiện"
+                      Style="{StaticResource MaterialDesignGroupBox}"
+                      Margin="0,0,0,16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" Margin="8"
+                             Text="{Binding TenSuKien, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Tên sự kiện *"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Row="1" Margin="8"
+                             Text="{Binding MucDich, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Mục đích sử dụng"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Row="2" Margin="8"
+                             Text="{Binding DiaDiem, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Địa điểm tổ chức"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Thời gian -->
+            <GroupBox Grid.Row="3" Header="Thời gian mượn"
+                      Style="{StaticResource MaterialDesignGroupBox}"
+                      Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <DatePicker Grid.Column="0" Margin="8"
+                                SelectedDate="{Binding NgayMuon}"
+                                materialDesign:HintAssist.Hint="Ngày mượn"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}"/>
+
+                    <TextBox Grid.Column="1" Margin="8"
+                             Text="{Binding GioMuon, StringFormat=HH:mm, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Giờ bắt đầu"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+
+                    <TextBox Grid.Column="2" Margin="8"
+                             Text="{Binding GioTra, StringFormat=HH:mm, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Giờ trả"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Danh sách CSVC -->
+            <GroupBox Grid.Row="4" Header="Danh sách CSVC cần mượn"
+                      Style="{StaticResource MaterialDesignGroupBox}"
+                      Margin="0,0,0,16">
+                <StackPanel>
+                    <DataGrid ItemsSource="{Binding DanhSachCsvc}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              Margin="0,0,0,8">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Mã CSVC (AssetId)"
+                                                Binding="{Binding AssetId}"
+                                                Width="150"/>
+                            <DataGridTextColumn Header="Số lượng"
+                                                Binding="{Binding QuantityRequested}"
+                                                Width="100"/>
+                            <DataGridTextColumn Header="Ghi chú"
+                                                Binding="{Binding ItemNote}"
+                                                Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Content="+ Thêm CSVC"
+                            Command="{Binding ThemCsvcCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            HorizontalAlignment="Left"/>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Ghi chú + Gửi -->
+            <StackPanel Grid.Row="5">
+                <TextBox Margin="0,0,0,16"
+                         Text="{Binding GhiChu, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Cam kết / Ghi chú thêm"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         AcceptsReturn="True" Height="80"/>
+
+                <TextBlock Text="{Binding ThongBao}" Foreground="Green"
+                           Margin="0,0,0,8" FontWeight="Bold"/>
+
+                <Button Content="Gửi đơn mượn ngoài giờ"
+                        Command="{Binding GuiDonCommand}"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        HorizontalAlignment="Right"/>
+            </StackPanel>
+
+        </Grid>
+    </ScrollViewer>
+</Window>

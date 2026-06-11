@@ -7,4 +7,5 @@ public interface IBorrowService
 {
     Task<BorrowRequest> CreateInClassRequestAsync(CreateBorrowRequestDto dto);
     Task<List<BorrowRequest>> GetRequestsByUserAsync(int userId);
+    Task<BorrowRequest> CreateOffHoursRequestAsync(CreateBorrowRequestDto dto);
 }

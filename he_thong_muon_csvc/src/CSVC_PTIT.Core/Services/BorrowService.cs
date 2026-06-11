@@ -68,4 +68,47 @@ public class BorrowService : IBorrowService
             .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
     }
+    public async Task<BorrowRequest> CreateOffHoursRequestAsync(CreateBorrowRequestDto dto)
+    {
+        // Sinh mã đơn DT-001, DT-002...
+        var count = await _context.BorrowRequests
+            .Where(r => r.RequestType == RequestType.OffHours)
+            .CountAsync() + 1;
+        var requestCode = $"DT-{count:D3}";
+
+        var request = new BorrowRequest
+        {
+            RequestCode = requestCode,
+            RequestType = RequestType.OffHours,
+            RequesterId = dto.RequesterId,
+            ContactPhone = dto.ContactPhone,
+            Title = dto.Title,
+            Purpose = dto.Purpose,
+            RequestNote = dto.RequestNote,
+            BorrowStartAt = dto.BorrowStartAt,
+            BorrowEndAt = dto.BorrowEndAt,
+            ExpectedReturnAt = dto.BorrowEndAt,
+            Status = RequestStatus.Pending,
+            PriorityLevel = PriorityLevel.Normal,
+            CreatedAt = DateTime.Now
+        };
+
+        foreach (var item in dto.Assets)
+        {
+            request.BorrowRequestAssets.Add(new BorrowRequestAsset
+            {
+                AssetId = item.AssetId,
+                QuantityRequested = item.QuantityRequested,
+                QuantityApproved = 0,
+                QuantityCheckedOut = 0,
+                QuantityReturned = 0,
+                ItemNote = item.ItemNote
+            });
+        }
+
+        _context.BorrowRequests.Add(request);
+        await _context.SaveChangesAsync();
+
+        return request;
+    }
 }
