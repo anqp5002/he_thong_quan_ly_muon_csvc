@@ -153,6 +153,14 @@
                         </StackPanel>
                     </ListBoxItem>
 
+                    <!-- Menu: Tra cứu CSVC --> ← thêm đoạn này
+                    <ListBoxItem Tag="TraCuu">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Magnify" Width="22" Height="22" VerticalAlignment="Center" />
+                            <TextBlock Text="Tra cứu CSVC" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </ListBoxItem>
+
                     <!-- Menu: Đơn mượn -->
                     <ListBoxItem Tag="BorrowRequests">
                         <StackPanel Orientation="Horizontal">

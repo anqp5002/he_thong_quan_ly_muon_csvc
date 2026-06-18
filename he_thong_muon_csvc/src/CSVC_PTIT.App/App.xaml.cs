@@ -22,7 +22,7 @@ public partial class App : Application
     /// TrustServerCertificate → Bỏ qua SSL (vì chạy local)
     /// </summary>
     private const string ConnectionString =
-        "Server=localhost,14333;Database=CsvcPtitDb;User Id=sa;Password=CsvcPtitCac@2026;TrustServerCertificate=True";
+        "Server=localhost,14333;Database=CsvcPtitDb;User Id=sa;Password=CsvcPtitCac@2026;TrustServerCertificate=True;Encrypt=False";
 
     /// <summary>
     /// DI Container — nơi đăng ký tất cả services và viewmodels.
@@ -61,6 +61,7 @@ public partial class App : Application
         services.AddTransient<DanhMucCSVCViewModel>();      // Sprint 1 — A.7
         services.AddTransient<CauHinhHeThongViewModel>();   // Sprint 1 — A.8
         services.AddTransient<NhatKyViewModel>();           // Sprint 1 — A.9
+        services.AddTransient<TraCuuCSVCViewModel>();       // Sprint 1 — B.1
 
         ServiceProvider = services.BuildServiceProvider();
 
