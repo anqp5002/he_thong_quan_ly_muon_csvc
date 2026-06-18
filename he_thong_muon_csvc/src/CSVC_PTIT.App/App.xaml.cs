@@ -46,6 +46,12 @@ public partial class App : Application
         services.AddScoped<IAssetService, AssetService>();
         services.AddScoped<IAuditLogService, AuditLogService>(); // Sprint 1 — A.9
 
+        // --- Dev C Services ---
+        services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IReturnService, ReturnService>();
+        services.AddScoped<IDamageReportService, DamageReportService>();
+        services.AddScoped<IReportService, ReportService>();
+
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
         services.AddTransient<DashboardViewModel>();
@@ -62,6 +68,7 @@ public partial class App : Application
         using var scope = ServiceProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<CsvcDbContext>();
         await DatabaseSeeder.SeedAsync(db);
+        await DatabaseSeederDevC.SeedDevCAsync(db); // Seed dữ liệu mẫu cho test chức năng Dev C
 
         // Mở cửa sổ đăng nhập trước
         var loginVm = ServiceProvider.GetRequiredService<LoginViewModel>();

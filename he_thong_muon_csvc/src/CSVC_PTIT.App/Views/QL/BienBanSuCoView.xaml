@@ -1,0 +1,73 @@
+<UserControl x:Class="CSVC_PTIT.App.Views.QL.BienBanSuCoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="{DynamicResource MaterialDesignPaper}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Biên Bản Sự Cố (Sprint 2)" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <!-- Form tạo biên bản -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox x:Name="CbbRequest" materialDesign:HintAssist.Hint="Thuộc Đơn Mượn (Mã Đơn)" Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" DisplayMemberPath="RequestCode" SelectionChanged="CbbRequest_SelectionChanged"/>
+            <ComboBox x:Name="CbbAsset" materialDesign:HintAssist.Hint="Chọn Tài Sản Sự Cố" Grid.Row="0" Grid.Column="1" Margin="0,0,10,15" DisplayMemberPath="AssetName"/>
+            <ComboBox x:Name="CbbUser" materialDesign:HintAssist.Hint="Người Chịu Trách Nhiệm" Grid.Row="0" Grid.Column="2" Margin="0,0,0,15" DisplayMemberPath="FullName"/>
+
+            <ComboBox x:Name="CbbIncidentType" materialDesign:HintAssist.Hint="Loại Sự Cố" Grid.Row="1" Grid.Column="0" Margin="0,0,10,15">
+                <ComboBoxItem Content="Hỏng (Damage)" Tag="Damage" IsSelected="True"/>
+                <ComboBoxItem Content="Mất (Loss)" Tag="Loss"/>
+            </ComboBox>
+            <ComboBox x:Name="CbbSeverity" materialDesign:HintAssist.Hint="Mức Độ" Grid.Row="1" Grid.Column="1" Margin="10,0,0,15">
+                <ComboBoxItem Content="Nhẹ (Low)" Tag="Low" IsSelected="True"/>
+                <ComboBoxItem Content="Vừa (Medium)" Tag="Medium"/>
+                <ComboBoxItem Content="Nặng (High)" Tag="High"/>
+            </ComboBox>
+
+            <TextBox x:Name="TxtDescription" materialDesign:HintAssist.Hint="Mô tả chi tiết sự cố" Grid.Row="2" Grid.ColumnSpan="3" Margin="0,0,0,15" TextWrapping="Wrap" MinLines="2"/>
+            
+            <TextBox x:Name="TxtEstimatedCompensation" materialDesign:HintAssist.Hint="Bồi thường dự kiến (VNĐ)" Grid.Row="3" Grid.Column="0" Margin="0,0,10,15"/>
+
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="BtnCreateReport" Content="Tạo Biên Bản" Click="BtnCreateReport_Click" Margin="0,0,10,0"/>
+                <Button x:Name="BtnPrintReport" Content="In Biên Bản PDF" Style="{StaticResource MaterialDesignOutlinedButton}" Click="BtnPrintReport_Click" IsEnabled="False"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Danh sách biên bản -->
+        <TextBlock Grid.Row="2" Text="Danh sách biên bản đã lập:" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,10,0,0"/>
+        <DataGrid x:Name="GridReports" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="False" Margin="0,40,0,0" IsReadOnly="True" GridLinesVisibility="All">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Mã BB" Binding="{Binding ReportId}" Width="80"/>
+                <DataGridTextColumn Header="Tài Sản" Binding="{Binding Asset.AssetName}" Width="200"/>
+                <DataGridTextColumn Header="Loại Sự Cố" Binding="{Binding IncidentType}" Width="100"/>
+                <DataGridTextColumn Header="Mức Độ" Binding="{Binding Severity}" Width="100"/>
+                <DataGridTextColumn Header="Bồi Thường (VNĐ)" Binding="{Binding EstimatedCompensation, StringFormat=\{0:N0\}}" Width="150"/>
+                <DataGridTextColumn Header="Trạng Thái" Binding="{Binding Status}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -133,7 +133,7 @@
                     <ListBoxItem Tag="Dashboard">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ViewDashboard" Width="22" Height="22" VerticalAlignment="Center" />
-                            <TextBlock Text="Tổng quan" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                            <TextBlock Text="Báo cáo tồn kho" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
                         </StackPanel>
                     </ListBoxItem>
 
@@ -181,7 +181,7 @@
                     <ListBoxItem Tag="Settings">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="CogOutline" Width="22" Height="22" VerticalAlignment="Center" />
-                            <TextBlock Text="Cấu hình hệ thống" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
+                            <TextBlock Text="Nhận trả CSVC" Margin="14,0,0,0" FontSize="14" VerticalAlignment="Center" />
                         </StackPanel>
                     </ListBoxItem>
 

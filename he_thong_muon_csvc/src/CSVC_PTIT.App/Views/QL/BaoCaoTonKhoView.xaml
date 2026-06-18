@@ -1,0 +1,45 @@
+<UserControl x:Class="CSVC_PTIT.App.Views.QL.BaoCaoTonKhoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Background="{DynamicResource MaterialDesignPaper}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Báo Cáo Tồn Kho CSVC (Sprint 2)" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <ComboBox materialDesign:HintAssist.Hint="Kỳ Báo Cáo" Width="200" Margin="0,0,20,0">
+                <ComboBoxItem Content="Tháng này" IsSelected="True"/>
+                <ComboBoxItem Content="Tháng trước"/>
+                <ComboBoxItem Content="Năm nay"/>
+            </ComboBox>
+            <Button Content="Lọc Dữ Liệu" Style="{StaticResource MaterialDesignOutlinedButton}" Click="BtnFilter_Click"/>
+        </StackPanel>
+
+        <DataGrid x:Name="GridAssets" Grid.Row="2" AutoGenerateColumns="False" CanUserAddRows="False" CanUserReorderColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Mã CSVC" Binding="{Binding AssetCode}" Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Tên CSVC" Binding="{Binding AssetName}" Width="250" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Phân Loại" Binding="{Binding Category.CategoryName}" Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Tổng Số Lượng" Binding="{Binding TotalQuantity}" Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Khả Dụng" Binding="{Binding AvailableQuantity}" Width="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Tình Trạng Vật Lý" Binding="{Binding ConditionStatus}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="BtnExportPdf" Content="Xuất Báo Cáo PDF" Click="BtnExportPdf_Click" Margin="0,0,10,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

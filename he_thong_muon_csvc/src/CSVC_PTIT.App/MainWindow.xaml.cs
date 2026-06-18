@@ -69,10 +69,10 @@ public partial class MainWindow : Window
     private void Menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Guard: XAML kích hoạt sự kiện này trước khi InitializeComponent() hoàn tất
-        if (TxtPageTitle is null || MainContent is null)
+        if (TxtPageTitle == null || MainContent == null)
             return;
 
-        if (MenuList.SelectedItem is not ListBoxItem selectedItem)
+        if (MenuList?.SelectedItem is not ListBoxItem selectedItem)
             return;
 
         var tag = selectedItem.Tag?.ToString();
@@ -95,10 +95,14 @@ public partial class MainWindow : Window
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
-            "Users" => new QuanLyTaiKhoanView(),       // Sprint 1 — A.5
-            "Assets" => new DanhMucCSVCView(),          // Sprint 1 — A.7
-            "Settings" => new CauHinhHeThongView(),     // Sprint 1 — A.8
-            "AuditLog" => new NhatKyView(),             // Sprint 1 — A.9
+            "Users" => new QuanLyTaiKhoanView(),
+            "Assets" => new DanhMucCSVCView(),
+            "Settings" => new CauHinhHeThongView(),
+            "AuditLog" => new NhatKyView(),
+            "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(),
+            "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),
+            "BaoCao" => new CSVC_PTIT.App.Views.QL.BaoCaoTonKhoView(),
+            "DoiSoat" => new CSVC_PTIT.App.Views.QL.DoiSoatCSVCView(),
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }
