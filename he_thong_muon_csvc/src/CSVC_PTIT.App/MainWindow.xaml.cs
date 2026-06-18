@@ -132,11 +132,29 @@ public partial class MainWindow : Window
         {
             _authService.Logout();
             
+            // Chuyển sang OnExplicitShutdown để tránh app tắt khi MainWindow hiện tại đóng
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            
             var loginVm = App.ServiceProvider.GetRequiredService<LoginViewModel>();
             var loginView = new LoginView(loginVm);
-            loginView.Show();
             
+            // Đóng cửa sổ chính hiện tại
             this.Close();
+            
+            // Mở lại cửa sổ đăng nhập
+            if (loginView.ShowDialog() == true)
+            {
+                // Nếu đăng nhập thành công, mở lại MainWindow mới với phân quyền mới
+                var mainWindow = new MainWindow();
+                Application.Current.MainWindow = mainWindow;
+                Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                mainWindow.Show();
+            }
+            else
+            {
+                // Nếu tắt form đăng nhập thì thoát app
+                Application.Current.Shutdown();
+            }
         }
     }
 }
