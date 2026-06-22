@@ -10,6 +10,8 @@ public static class DatabaseSeeder
 {
     public static async Task SeedAsync(CsvcDbContext context)
     {
+        await context.Database.EnsureCreatedAsync();
+
         if (context.Roles.Any()) 
             return;
 

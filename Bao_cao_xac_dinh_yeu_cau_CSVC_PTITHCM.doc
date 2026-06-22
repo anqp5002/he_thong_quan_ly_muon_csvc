@@ -1,0 +1,481 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="ProgId" content="Word.Document"/>
+  <meta name="Generator" content="Microsoft Word 15"/>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:SpellingState>Clean</w:SpellingState>
+      <w:GrammarState>Clean</w:GrammarState>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
+  <style>
+    @page {
+      size: 210mm 297mm;
+      margin: 20mm 20mm 20mm 30mm;
+    }
+    body {
+      font-family: "Times New Roman", serif;
+      font-size: 13pt;
+      color: #000;
+      line-height: 1.5;
+    }
+    h1 {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 12pt 0 6pt;
+    }
+    h2 {
+      font-size: 14pt;
+      font-weight: bold;
+      margin: 14pt 0 6pt;
+    }
+    h3 {
+      font-size: 13pt;
+      font-weight: bold;
+      margin: 10pt 0 4pt;
+      text-indent: 18pt;
+    }
+    p {
+      font-size: 13pt;
+      margin: 4pt 0;
+      text-align: justify;
+      text-indent: 36pt;
+    }
+    p.center {
+      text-align: center;
+      text-indent: 0;
+      font-size: 12pt;
+      margin-bottom: 10pt;
+    }
+    p.no-indent {
+      text-indent: 0;
+    }
+    p.form-title {
+      text-indent: 18pt;
+      font-weight: bold;
+      margin: 8pt 0 2pt;
+    }
+    p.form-desc {
+      text-indent: 18pt;
+      font-style: italic;
+      font-size: 12pt;
+      color: #333;
+      margin: 0 0 4pt;
+    }
+    ul {
+      margin: 4pt 0 8pt 36pt;
+    }
+    li {
+      font-size: 13pt;
+      line-height: 1.5;
+      margin: 2pt 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6pt 0 12pt;
+      font-size: 12pt;
+    }
+    th, td {
+      border: 1pt solid #000;
+      padding: 4pt 6pt;
+      vertical-align: top;
+    }
+    th {
+      text-align: center;
+      font-weight: bold;
+      background-color: #f2f2f2;
+    }
+    .note {
+      font-size: 11pt;
+      font-style: italic;
+      color: #333;
+      text-indent: 18pt;
+      margin: 0 0 8pt;
+    }
+  </style>
+</head>
+<body>
+
+<h1>BÁO CÁO XÁC ĐỊNH YÊU CẦU</h1>
+<p class="center">
+  Đề tài: <b>Hệ thống cho mượn cơ sở vật chất PTIT TP.HCM</b><br/>
+  Môn học: Công nghệ phần mềm &ndash; Phân tích yêu cầu
+</p>
+
+<h2>1. Giới thiệu tổng quan hệ thống</h2>
+<p>Hệ thống cho mượn cơ sở vật chất (CSVC) được xây dựng để số hóa quy trình cấp phát &ndash; thu hồi tài nguyên phục vụ học tập, giảng dạy và hoạt động ngoài giờ tại PTIT TP.HCM. Tài nguyên quản lý gồm: phòng học, hội trường, chìa khóa, micro, phấn, sổ đầu bài, thiết bị mở máy chiếu và các CSVC phụ trợ khác.</p>
+<p>Hệ thống xử lý đầy đủ hai luồng nghiệp vụ chính:</p>
+<ul>
+  <li><b>Luồng 1 &ndash; Mượn trong giờ học:</b> áp dụng cho SV/GV có buổi học theo thời khóa biểu.</li>
+  <li><b>Luồng 2 &ndash; Mượn ngoài giờ học:</b> áp dụng cho CLB, Đoàn, đơn vị nội bộ và đối tác bên ngoài, có đơn và phê duyệt cấp khoa/trường.</li>
+</ul>
+
+<h2>2. Khảo sát hiện trạng</h2>
+
+<h3>2.1 Mô tả quy trình cho mượn hiện tại</h3>
+<p><b>Trong giờ học:</b> người mượn xuống phòng thiết bị, xuất trình thẻ, báo nhu cầu, bác quản lý kiểm tra và ghi sổ, cấp phát dụng cụ; cuối buổi trả lại và nhận thẻ.</p>
+<p><b>Ngoài giờ:</b> người mượn làm đơn xin mượn, gửi đơn vị liên quan, chờ duyệt, được duyệt mới nhận bàn giao CSVC.</p>
+
+<h3>2.2 Các vấn đề tồn tại</h3>
+<ul>
+  <li>Ùn tắc đầu buổi học do nhiều lớp mượn cùng thời điểm tại một điểm cấp phát.</li>
+  <li>Ghi chép tay dễ thiếu/sai dữ liệu (MSSV, thời gian, số lượng tài nguyên).</li>
+  <li>Khó truy xuất nhanh trạng thái mượn đang mở.</li>
+  <li>Luồng hồ sơ ngoài giờ rời rạc, thiếu theo dõi trạng thái tập trung.</li>
+  <li>Báo cáo tổng hợp tốn thời gian, phụ thuộc tổng hợp thủ công.</li>
+</ul>
+
+<h3>2.3 Định hướng giải quyết ùn tắc đầu buổi trong hệ thống mới</h3>
+<ul>
+  <li>Cho phép <b>đăng ký trước theo buổi học</b> (pre-book) từ người mượn.</li>
+  <li>Phát <b>mã lượt nhận</b> theo hàng đợi điện tử và tách luồng ưu tiên đã đăng ký trước.</li>
+  <li>Màn hình bác quản lý hiển thị danh sách sắp cấp phát để chuẩn bị trước.</li>
+  <li>Báo cáo chỉ số vận hành đầu buổi: thời gian chờ trung bình, lượt chờ cực đại.</li>
+</ul>
+
+<h2>3. Mục tiêu hệ thống (phạm vi môn học)</h2>
+<ul>
+  <li>Chuẩn hóa nghiệp vụ mượn/trả theo quy trình thống nhất.</li>
+  <li>Giảm ùn tắc đầu buổi học do xếp hàng mượn trực tiếp.</li>
+  <li>Quản lý đầy đủ vòng đời hồ sơ ngoài giờ: tạo đơn &ndash; duyệt &ndash; bàn giao &ndash; hoàn trả.</li>
+  <li>Tăng khả năng kiểm soát trách nhiệm và truy vết cơ bản khi trễ hạn/hư hỏng.</li>
+  <li>Cung cấp báo cáo quản trị cơ bản cho Ban Giám đốc/Hiệu trưởng và các đơn vị liên quan.</li>
+</ul>
+
+<h2>4. Phạm vi áp dụng</h2>
+<ul>
+  <li>Phạm vi không gian: PTIT TP.HCM (phòng học, hội trường và khu vực CSVC quản lý tập trung).</li>
+  <li>Phạm vi nghiệp vụ: mượn trong giờ, mượn ngoài giờ, cấp phát, hoàn trả, duyệt hồ sơ, thống kê báo cáo.</li>
+  <li>Phạm vi dữ liệu: người dùng, danh mục CSVC, lượt mượn/trả, hồ sơ duyệt, nhật ký thao tác, thông báo hỏng hóc.</li>
+</ul>
+
+<h2>5. Đối tượng sử dụng</h2>
+<table>
+  <tr><th>STT</th><th>Đối tượng</th><th>Mô tả vai trò</th></tr>
+  <tr><td>1</td><td>Sinh viên/Giảng viên</td><td>Mượn CSVC trong giờ học (đăng ký trước hoặc vãng lai); tạo yêu cầu mượn ngoài giờ khi có nhu cầu cá nhân.</td></tr>
+  <tr><td>2</td><td>CLB/Đoàn Thanh niên</td><td>Tạo đơn mượn CSVC ngoài giờ cho hoạt động phong trào/sự kiện; sử dụng luồng nghiệp vụ Người mượn ngoài giờ (NM).</td></tr>
+  <tr><td>3</td><td>Đơn vị nội bộ Học viện</td><td>Nộp đề xuất/công văn mượn CSVC ngoài giờ phục vụ công tác chuyên môn; sử dụng luồng NM ngoài giờ.</td></tr>
+  <tr><td>4</td><td>Đối tác bên ngoài</td><td>Nộp hồ sơ mượn ngoài giờ theo quy định kèm giấy tờ xác minh; sử dụng luồng NM ngoài giờ.</td></tr>
+  <tr><td>5</td><td>Bác quản lý phòng thiết bị cố định</td><td>Kiểm tra điều kiện, cấp phát, nhận trả, ghi nhận hỏng hóc, cập nhật trạng thái CSVC.</td></tr>
+  <tr><td>6</td><td>Bộ phận duyệt cấp khoa/trường</td><td>Duyệt/từ chối đơn mượn ngoài giờ và gắn điều kiện sử dụng.</td></tr>
+  <tr><td>7</td><td>Admin hệ thống</td><td>Phân quyền, cấu hình, quản lý dữ liệu nền, sao lưu/khôi phục.</td></tr>
+  <tr><td>8</td><td>Ban Giám đốc/Hiệu trưởng</td><td>Theo dõi báo cáo tổng hợp, hiệu suất sử dụng CSVC, chỉ số ùn tắc đầu buổi.</td></tr>
+</table>
+<p class="note">Ghi chú: CLB/Đoàn (STT 2), Đơn vị nội bộ (STT 3) và Đối tác (STT 4) đều sử dụng chung luồng nghiệp vụ Người mượn ngoài giờ (NM) trong Mẫu 1 bên dưới.</p>
+
+<!-- ==================== MẪU 1 ==================== -->
+<h2>6. Bảng yêu cầu chức năng nghiệp vụ (Mẫu 1)</h2>
+
+<h3>6.1 Bộ phận: Người mượn &ndash; Mã số: NM</h3>
+<table>
+  <tr><th>STT</th><th>Công việc</th><th>Loại công việc</th><th>Quy định liên quan</th><th>Biểu mẫu liên quan</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Tra cứu CSVC khả dụng</td><td>Tra cứu</td><td>NM_QD01</td><td>NM_BM01</td><td>Tra cứu theo ngày, ca, loại CSVC.</td></tr>
+  <tr><td>2</td><td>Đăng ký mượn trong giờ học</td><td>Lưu trữ</td><td>NM_QD02</td><td>NM_BM02</td><td>Áp dụng SV/GV đúng lịch học.</td></tr>
+  <tr><td>3</td><td>Đăng ký trước để nhận nhanh đầu buổi</td><td>Lưu trữ</td><td>NM_QD03</td><td>NM_BM02</td><td>Giảm xếp hàng trực tiếp.</td></tr>
+  <tr><td>4</td><td>Tạo đơn mượn ngoài giờ</td><td>Lưu trữ</td><td>NM_QD04</td><td>NM_BM03</td><td>Áp dụng CLB/Đoàn/đơn vị/đối tác.</td></tr>
+  <tr><td>5</td><td>Theo dõi trạng thái duyệt hồ sơ</td><td>Tra cứu</td><td>NM_QD05</td><td>NM_BM04</td><td>Chờ duyệt/duyệt/từ chối.</td></tr>
+  <tr><td>6</td><td>Yêu cầu hoàn trả CSVC</td><td>Lưu trữ</td><td>NM_QD06</td><td>NM_BM05</td><td>Người mượn gửi yêu cầu trả; TB xác nhận tại TB_BM03.</td></tr>
+</table>
+
+<h3>6.2 Bộ phận: Bác quản lý phòng thiết bị cố định &ndash; Mã số: TB</h3>
+<table>
+  <tr><th>STT</th><th>Công việc</th><th>Loại công việc</th><th>Quy định liên quan</th><th>Biểu mẫu liên quan</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Kiểm tra điều kiện cấp phát</td><td>Tra cứu, Lưu trữ</td><td>TB_QD01</td><td>TB_BM01</td><td>Kiểm tra hồ sơ/lượt mượn hợp lệ.</td></tr>
+  <tr><td>2</td><td>Cấp phát CSVC theo hàng đợi</td><td>Lưu trữ</td><td>TB_QD02</td><td>TB_BM02</td><td>Ưu tiên lượt đăng ký trước.</td></tr>
+  <tr><td>3</td><td>Nhận trả và đối soát</td><td>Lưu trữ, Tính toán</td><td>TB_QD03</td><td>TB_BM03</td><td>Tính trễ hạn, ghi nhận tình trạng. Tham chiếu NM_BM05.</td></tr>
+  <tr><td>4</td><td>Ghi nhận thông báo hỏng hóc</td><td>Lưu trữ</td><td>TB_QD04</td><td>TB_BM04</td><td>Cập nhật trạng thái CSVC.</td></tr>
+  <tr><td>5</td><td>Lập báo cáo vận hành quầy thiết bị</td><td>Kết xuất</td><td>TB_QD05</td><td>TB_BM05</td><td>Báo cáo theo ngày/tuần.</td></tr>
+</table>
+
+<h3>6.3 Bộ phận: Duyệt cấp khoa/trường &ndash; Mã số: PD</h3>
+<table>
+  <tr><th>STT</th><th>Công việc</th><th>Loại công việc</th><th>Quy định liên quan</th><th>Biểu mẫu liên quan</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Tiếp nhận hồ sơ mượn ngoài giờ</td><td>Tra cứu</td><td>PD_QD01</td><td>PD_BM01</td><td>Kiểm tra hồ sơ theo loại đối tượng.</td></tr>
+  <tr><td>2</td><td>Duyệt/từ chối hồ sơ</td><td>Lưu trữ</td><td>PD_QD02</td><td>PD_BM02</td><td>Từ chối bắt buộc có lý do.</td></tr>
+  <tr><td>3</td><td>Thiết lập điều kiện sử dụng</td><td>Lưu trữ</td><td>PD_QD03</td><td>PD_BM02</td><td>Ràng buộc phạm vi thời gian-không gian.</td></tr>
+  <tr><td>4</td><td>Kết xuất danh sách hồ sơ đã duyệt</td><td>Kết xuất</td><td>PD_QD04</td><td>PD_BM03</td><td>Phục vụ bàn giao và kiểm tra.</td></tr>
+</table>
+
+<h3>6.4 Bộ phận: Admin hệ thống &ndash; Mã số: AD</h3>
+<table>
+  <tr><th>STT</th><th>Công việc</th><th>Loại công việc</th><th>Quy định liên quan</th><th>Biểu mẫu liên quan</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Quản lý tài khoản và phân quyền</td><td>Lưu trữ</td><td>AD_QD01</td><td>AD_BM01</td><td>Quyền theo vai trò NM/TB/PD/AD/LD.</td></tr>
+  <tr><td>2</td><td>Quản lý danh mục CSVC</td><td>Lưu trữ</td><td>AD_QD02</td><td>AD_BM02</td><td>Danh mục phòng, hội trường, dụng cụ.</td></tr>
+  <tr><td>3</td><td>Cấu hình hàng đợi đầu buổi</td><td>Lưu trữ</td><td>AD_QD03</td><td>AD_BM03</td><td>Khung giờ, mức ưu tiên, giới hạn lượt.</td></tr>
+  <tr><td>4</td><td>Sao lưu/khôi phục dữ liệu</td><td>Kết xuất, Lưu trữ</td><td>AD_QD04</td><td>AD_BM04</td><td>Đảm bảo an toàn dữ liệu hệ thống.</td></tr>
+</table>
+
+<h3>6.5 Bộ phận: Ban Giám đốc/Hiệu trưởng &ndash; Mã số: LD</h3>
+<table>
+  <tr><th>STT</th><th>Công việc</th><th>Loại công việc</th><th>Quy định liên quan</th><th>Biểu mẫu liên quan</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Xem báo cáo tổng hợp sử dụng CSVC</td><td>Tra cứu, Kết xuất</td><td>LD_QD01</td><td>LD_BM01</td><td>Theo tuần/tháng/học kỳ.</td></tr>
+  <tr><td>2</td><td>Xem báo cáo ùn tắc đầu buổi</td><td>Tra cứu, Kết xuất</td><td>LD_QD02</td><td>LD_BM02</td><td>Thời gian chờ TB, lượt chờ cực đại.</td></tr>
+</table>
+
+<!-- ==================== MẪU 2 ==================== -->
+<h2>7. Bảng quy định / công thức liên quan (Mẫu 2) &ndash; theo từng bộ phận</h2>
+
+<h3>7.1 Quy định/Công thức cho bộ phận Người mượn (NM)</h3>
+<table>
+  <tr><th>STT</th><th>Mã số</th><th>Tên quy định/công thức</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>NM_QD01</td><td>Tra cứu CSVC</td><td>Người mượn được tra cứu theo ngày, ca học, loại CSVC, trạng thái khả dụng.</td><td></td></tr>
+  <tr><td>2</td><td>NM_QD02</td><td>Điều kiện mượn trong giờ</td><td>Người mượn phải hợp lệ (MSSV/thẻ), đúng buổi học, CSVC còn khả dụng.</td><td></td></tr>
+  <tr><td>3</td><td>NM_QD03</td><td>Đăng ký trước đầu buổi</td><td>Lượt đăng ký trước có thời hạn hiệu lực; quá hạn sẽ chuyển sang lượt vãng lai.</td><td></td></tr>
+  <tr><td>4</td><td>NM_QD04</td><td>Điều kiện hồ sơ ngoài giờ</td><td>Đơn phải có đầy đủ mục đích, thời gian, người chịu trách nhiệm, hồ sơ kèm theo theo đối tượng.</td><td></td></tr>
+  <tr><td>5</td><td>NM_QD05</td><td>Trạng thái xử lý hồ sơ</td><td>Hồ sơ có các trạng thái: Chờ duyệt, Đã duyệt, Từ chối, Hủy.</td><td></td></tr>
+  <tr><td>6</td><td>NM_QD06</td><td>Yêu cầu hoàn trả</td><td>Người mượn gửi yêu cầu trả kèm ghi chú tình trạng; việc xác nhận chính thức do TB thực hiện qua TB_BM03.</td><td></td></tr>
+</table>
+
+<h3>7.2 Quy định/Công thức cho bộ phận Bác quản lý thiết bị (TB)</h3>
+<table>
+  <tr><th>STT</th><th>Mã số</th><th>Tên quy định/công thức</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>TB_QD01</td><td>Điều kiện cấp phát</td><td>Chỉ cấp phát khi lượt mượn hợp lệ (đúng lịch hoặc hồ sơ ngoài giờ đã duyệt).</td><td></td></tr>
+  <tr><td>2</td><td>TB_QD02</td><td>Thứ tự cấp phát</td><td>Ưu tiên lượt đăng ký trước còn hiệu lực; sau đó đến lượt vãng lai theo thời điểm check-in.</td><td></td></tr>
+  <tr><td>3</td><td>TB_QD03</td><td>Công thức tính trễ hạn</td><td>Trễ(phút) = max(0, Thời điểm trả thực tế &ndash; Thời điểm phải trả).</td><td></td></tr>
+  <tr><td>4</td><td>TB_QD04</td><td>Quy trình ghi nhận hỏng hóc</td><td>Sự cố phát sinh phải lập phiếu TB_BM04 và cập nhật trạng thái CSVC tương ứng.</td><td></td></tr>
+  <tr><td>5</td><td>TB_QD05</td><td>Báo cáo vận hành quầy</td><td>Kết xuất số lượt cấp phát, số lượt trả trễ, số sự cố theo ngày/tuần.</td><td></td></tr>
+</table>
+
+<h3>7.3 Quy định/Công thức cho bộ phận Duyệt khoa/trường (PD)</h3>
+<table>
+  <tr><th>STT</th><th>Mã số</th><th>Tên quy định/công thức</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>PD_QD01</td><td>Kiểm tra hồ sơ ngoài giờ</td><td>Hồ sơ phải đủ thông tin đơn vị/cá nhân, mục đích, thời gian, người chịu trách nhiệm, giấy tờ kèm theo.</td><td></td></tr>
+  <tr><td>2</td><td>PD_QD02</td><td>Quy tắc duyệt/từ chối</td><td>Từ chối bắt buộc ghi lý do; duyệt phải ghi rõ phạm vi sử dụng và trách nhiệm.</td><td></td></tr>
+  <tr><td>3</td><td>PD_QD03</td><td>Điều kiện sử dụng khi duyệt</td><td>Điều kiện có thể gồm: khung giờ, khu vực, số lượng người, yêu cầu hoàn trả.</td><td></td></tr>
+  <tr><td>4</td><td>PD_QD04</td><td>Kết xuất hồ sơ đã duyệt</td><td>Danh sách đã duyệt được dùng để bàn giao tại quầy thiết bị.</td><td></td></tr>
+</table>
+
+<h3>7.4 Quy định/Công thức cho bộ phận Admin (AD)</h3>
+<table>
+  <tr><th>STT</th><th>Mã số</th><th>Tên quy định/công thức</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>AD_QD01</td><td>Phân quyền hệ thống</td><td>Mỗi vai trò chỉ sử dụng chức năng được cấp; thao tác quản trị phải lưu nhật ký.</td><td></td></tr>
+  <tr><td>2</td><td>AD_QD02</td><td>Quản lý danh mục CSVC</td><td>Mỗi CSVC có mã định danh duy nhất, trạng thái sử dụng và lịch sử thay đổi.</td><td></td></tr>
+  <tr><td>3</td><td>AD_QD03</td><td>Chính sách hàng đợi</td><td>Hỗ trợ cấu hình khung giờ cao điểm, số lượt tối đa, mức ưu tiên.</td><td></td></tr>
+  <tr><td>4</td><td>AD_QD04</td><td>Sao lưu/khôi phục</td><td>Dữ liệu phải được sao lưu định kỳ và có kịch bản khôi phục khi sự cố.</td><td></td></tr>
+</table>
+
+<h3>7.5 Quy định/Công thức cho bộ phận Lãnh đạo (LD)</h3>
+<table>
+  <tr><th>STT</th><th>Mã số</th><th>Tên quy định/công thức</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>LD_QD01</td><td>Báo cáo tổng hợp định kỳ</td><td>Báo cáo tổng hợp theo kỳ quản trị (tuần/tháng/học kỳ) phục vụ điều hành.</td><td></td></tr>
+  <tr><td>2</td><td>LD_QD02</td><td>Chỉ số ùn tắc đầu buổi</td><td>AvgWait = Tổng thời gian chờ / Tổng lượt nhận đầu buổi; MaxQueue = Số lượt chờ lớn nhất theo phiên.</td><td></td></tr>
+</table>
+
+<!-- ==================== BIỂU MẪU ==================== -->
+<h2>8. Mô tả biểu mẫu sử dụng</h2>
+
+<h3>8.1 Biểu mẫu nhóm Người mượn (NM)</h3>
+
+<p class="form-title">NM_BM01 &ndash; Màn hình tra cứu CSVC khả dụng</p>
+<p class="form-desc">Mục đích: Hiển thị kết quả tìm kiếm CSVC cho người mượn tra cứu trước khi đăng ký.</p>
+<table>
+  <tr><td style="width:30%">Trường nhập liệu</td><td>Ngày sử dụng, Ca học, Loại CSVC (phòng/dụng cụ/hội trường), Trạng thái</td></tr>
+  <tr><td>Kết quả hiển thị</td><td>Danh sách CSVC khả dụng: Mã CSVC, Tên, Loại, Số lượng còn, Vị trí nhận</td></tr>
+</table>
+
+<p class="form-title">NM_BM02 &ndash; Phiếu đăng ký mượn trong giờ học (kể cả đăng ký trước)</p>
+<p class="form-desc">Mục đích: Ghi nhận thông tin lượt mượn CSVC trong giờ học của SV/GV.</p>
+<table>
+  <tr><td>Mã phiếu</td><td>Ngày/giờ</td><td>MSSV/Mã GV</td><td>Họ tên người mượn</td><td>SĐT</td></tr>
+  <tr><td>Lớp</td><td colspan="2">Môn học/Phòng</td><td>Dụng cụ mượn</td><td>Số lượng</td></tr>
+  <tr><td>Loại lượt</td><td colspan="2">Đăng ký trước / Vãng lai</td><td colspan="2">Mã lượt nhận (hàng đợi)</td></tr>
+  <tr><td colspan="3">Ký người mượn</td><td colspan="2">Ký xác nhận quầy</td></tr>
+</table>
+
+<p class="form-title">NM_BM03 &ndash; Đơn xin mượn CSVC ngoài giờ</p>
+<p class="form-desc">Mục đích: Lập đơn mượn CSVC ngoài giờ cho CLB/Đoàn/đơn vị nội bộ/đối tác bên ngoài.</p>
+<table>
+  <tr><td>Loại đối tượng</td><td>SV/CLB/Đoàn/Đơn vị nội bộ/Đối tác</td><td>Mã hồ sơ</td></tr>
+  <tr><td>Tên tổ chức/cá nhân</td><td colspan="2">Người phụ trách + SĐT</td></tr>
+  <tr><td colspan="3">Mục đích sử dụng</td></tr>
+  <tr><td>Loại CSVC</td><td>Số lượng</td><td>Vị trí/Phòng</td></tr>
+  <tr><td>Thời gian bắt đầu</td><td colspan="2">Thời gian kết thúc</td></tr>
+  <tr><td colspan="3">Cam kết bảo quản và bồi thường nếu hư hỏng</td></tr>
+  <tr><td>Hồ sơ kèm theo</td><td colspan="2">Thẻ SV / xác nhận Đoàn / công văn / giấy giới thiệu (tùy đối tượng)</td></tr>
+  <tr><td colspan="3">Ý kiến duyệt cấp khoa/trường</td></tr>
+</table>
+
+<p class="form-title">NM_BM04 &ndash; Phiếu theo dõi trạng thái hồ sơ ngoài giờ</p>
+<p class="form-desc">Mục đích: Cho phép người mượn tra cứu tiến độ xử lý đơn mượn ngoài giờ đã nộp.</p>
+<table>
+  <tr><td>Mã hồ sơ</td><td>Ngày nộp</td><td>Trạng thái</td><td>Người duyệt</td></tr>
+  <tr><td>Tên tổ chức/cá nhân</td><td colspan="3">Loại CSVC yêu cầu</td></tr>
+  <tr><td colspan="4">Lý do từ chối / Điều kiện kèm theo (nếu có)</td></tr>
+</table>
+
+<p class="form-title">NM_BM05 &ndash; Phiếu yêu cầu hoàn trả CSVC</p>
+<p class="form-desc">Mục đích: Người mượn gửi yêu cầu trả CSVC kèm ghi chú tình trạng. Việc xác nhận chính thức do TB thực hiện tại TB_BM03.</p>
+<table>
+  <tr><td>Mã lượt mượn</td><td>Họ tên người mượn</td><td>Thời điểm yêu cầu trả</td></tr>
+  <tr><td>CSVC hoàn trả</td><td>Số lượng trả</td><td>Ghi chú tình trạng</td></tr>
+  <tr><td colspan="3">Xác nhận người mượn (chờ TB xác nhận đối soát tại TB_BM03)</td></tr>
+</table>
+
+<h3>8.2 Biểu mẫu nhóm Bác quản lý thiết bị (TB)</h3>
+
+<p class="form-title">TB_BM01 &ndash; Phiếu kiểm tra điều kiện cấp phát</p>
+<p class="form-desc">Mục đích: Bác quản lý kiểm tra tính hợp lệ của lượt mượn/hồ sơ trước khi cấp phát CSVC.</p>
+<table>
+  <tr><td>Mã lượt/hồ sơ</td><td>Loại mượn (trong giờ/ngoài giờ)</td><td>Họ tên người mượn</td></tr>
+  <tr><td>Loại CSVC yêu cầu</td><td>Số lượng yêu cầu</td><td>Tồn kho khả dụng</td></tr>
+  <tr><td>Kết quả kiểm tra</td><td colspan="2">Đạt / Không đạt &ndash; Lý do</td></tr>
+</table>
+
+<p class="form-title">TB_BM02 &ndash; Phiếu bàn giao CSVC</p>
+<p class="form-desc">Mục đích: Ghi nhận việc bàn giao CSVC từ quầy thiết bị cho người mượn.</p>
+<table>
+  <tr><td>Mã lượt</td><td>CSVC bàn giao</td><td>Số lượng</td><td>Tình trạng khi giao</td></tr>
+  <tr><td colspan="2">Giờ bàn giao</td><td colspan="2">Giờ phải trả (dự kiến)</td></tr>
+  <tr><td colspan="2">Người nhận (ký)</td><td colspan="2">Người bàn giao (ký)</td></tr>
+</table>
+
+<p class="form-title">TB_BM03 &ndash; Phiếu nhận trả và đối soát</p>
+<p class="form-desc">Mục đích: Bác quản lý xác nhận nhận trả, đối soát số lượng, tình trạng CSVC và tính trễ hạn. Tham chiếu NM_BM05.</p>
+<table>
+  <tr><td>Mã lượt</td><td>Họ tên người trả</td><td>CSVC trả</td><td>Số lượng trả</td></tr>
+  <tr><td>Giờ bàn giao ban đầu</td><td>Giờ trả thực tế</td><td>Giờ phải trả</td><td>Số phút trễ</td></tr>
+  <tr><td colspan="2">Tình trạng CSVC khi trả</td><td colspan="2">Kết quả đối soát (Đạt/Thiếu/Hỏng)</td></tr>
+  <tr><td colspan="2">Xác nhận người trả</td><td colspan="2">Xác nhận quầy thiết bị</td></tr>
+</table>
+
+<p class="form-title">TB_BM04 &ndash; Phiếu thông báo hỏng hóc</p>
+<p class="form-desc">Mục đích: Ghi nhận sự cố hỏng hóc CSVC để cập nhật trạng thái và xử lý bảo trì.</p>
+<table>
+  <tr><td>Mã CSVC</td><td>Tên CSVC</td><td>Người báo</td><td>Thời điểm</td></tr>
+  <tr><td colspan="4">Mô tả hỏng hóc / sự cố</td></tr>
+  <tr><td colspan="2">Mức độ ảnh hưởng</td><td colspan="2">Biện pháp xử lý tại chỗ</td></tr>
+</table>
+
+<p class="form-title">TB_BM05 &ndash; Báo cáo vận hành quầy thiết bị</p>
+<p class="form-desc">Mục đích: Tổng hợp chỉ tiêu vận hành quầy theo kỳ, phục vụ quản lý nội bộ.</p>
+<table>
+  <tr><td colspan="3"><b>Kỳ báo cáo:</b> Từ ngày ___/___/______ đến ngày ___/___/______</td></tr>
+  <tr><th>Chỉ tiêu</th><th>Giá trị</th><th>Ghi chú</th></tr>
+  <tr><td>Tổng lượt cấp phát</td><td></td><td></td></tr>
+  <tr><td>Tổng lượt trả trễ</td><td></td><td></td></tr>
+  <tr><td>Tổng sự cố hỏng hóc</td><td></td><td></td></tr>
+  <tr><td>Thời gian chờ trung bình đầu buổi</td><td></td><td></td></tr>
+</table>
+
+<h3>8.3 Biểu mẫu nhóm Duyệt khoa/trường (PD)</h3>
+
+<p class="form-title">PD_BM01 &ndash; Phiếu tiếp nhận hồ sơ ngoài giờ</p>
+<p class="form-desc">Mục đích: Bộ phận duyệt tiếp nhận và kiểm tra sơ bộ hồ sơ mượn ngoài giờ.</p>
+<table>
+  <tr><td>Mã hồ sơ</td><td>Ngày tiếp nhận</td><td>Loại đối tượng</td></tr>
+  <tr><td>Tên đơn vị/cá nhân</td><td colspan="2">Người phụ trách + SĐT</td></tr>
+  <tr><td colspan="3">Kết quả kiểm tra hồ sơ (Đủ / Thiếu &ndash; ghi rõ)</td></tr>
+</table>
+
+<p class="form-title">PD_BM02 &ndash; Phiếu duyệt/từ chối hồ sơ ngoài giờ</p>
+<p class="form-desc">Mục đích: Ghi nhận quyết định duyệt/từ chối và các điều kiện sử dụng kèm theo.</p>
+<table>
+  <tr><td>Mã hồ sơ</td><td>Trạng thái duyệt</td><td>Người duyệt</td><td>Thời điểm</td></tr>
+  <tr><td colspan="4">Lý do từ chối / Điều kiện sử dụng (nếu duyệt)</td></tr>
+</table>
+
+<p class="form-title">PD_BM03 &ndash; Danh sách hồ sơ ngoài giờ đã duyệt</p>
+<p class="form-desc">Mục đích: Kết xuất danh sách hồ sơ đã duyệt để bàn giao cho quầy thiết bị.</p>
+<table>
+  <tr><th>STT</th><th>Mã hồ sơ</th><th>Đơn vị/cá nhân</th><th>Thời gian sử dụng</th><th>CSVC</th><th>Số lượng</th></tr>
+  <tr><td>1</td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+<h3>8.4 Biểu mẫu nhóm Admin (AD)</h3>
+
+<p class="form-title">AD_BM01 &ndash; Màn hình quản lý tài khoản và phân quyền</p>
+<p class="form-desc">Mục đích: Admin quản lý tài khoản người dùng, gán vai trò và nhóm quyền tương ứng.</p>
+<table>
+  <tr><td>Mã tài khoản</td><td>Họ tên</td><td>Email/SĐT</td></tr>
+  <tr><td>Vai trò (NM/TB/PD/AD/LD)</td><td>Nhóm quyền</td><td>Hiệu lực (từ &ndash; đến)</td></tr>
+  <tr><td colspan="3">Ghi chú / Lý do thay đổi</td></tr>
+</table>
+
+<p class="form-title">AD_BM02 &ndash; Màn hình quản lý danh mục CSVC</p>
+<p class="form-desc">Mục đích: Thêm/sửa/xóa thông tin CSVC trong hệ thống, cập nhật trạng thái.</p>
+<table>
+  <tr><td>Mã CSVC</td><td>Tên CSVC</td><td>Loại (phòng/dụng cụ/hội trường)</td></tr>
+  <tr><td>Trạng thái (Khả dụng/Đang mượn/Bảo trì/Hỏng)</td><td>Số lượng tổng</td><td>Vị trí quản lý</td></tr>
+  <tr><td colspan="3">Lịch sử thay đổi gần nhất</td></tr>
+</table>
+
+<p class="form-title">AD_BM03 &ndash; Màn hình cấu hình hàng đợi đầu buổi</p>
+<p class="form-desc">Mục đích: Thiết lập tham số hàng đợi điện tử cho từng khung giờ cao điểm.</p>
+<table>
+  <tr><td>Khung giờ</td><td>Mức ưu tiên</td><td>Giới hạn lượt tối đa</td><td>Trạng thái (bật/tắt)</td></tr>
+  <tr><td colspan="4">Ghi chú cấu hình</td></tr>
+</table>
+
+<p class="form-title">AD_BM04 &ndash; Biên bản sao lưu/khôi phục dữ liệu</p>
+<p class="form-desc">Mục đích: Ghi nhận mỗi lần sao lưu hoặc khôi phục dữ liệu hệ thống.</p>
+<table>
+  <tr><td>Thời điểm</td><td>Loại thao tác (Sao lưu/Khôi phục)</td><td>Kết quả (Thành công/Thất bại)</td></tr>
+  <tr><td>Người thực hiện</td><td>Dung lượng</td><td>Vị trí lưu trữ</td></tr>
+  <tr><td colspan="3">Ghi chú</td></tr>
+</table>
+
+<h3>8.5 Biểu mẫu nhóm Lãnh đạo (LD)</h3>
+
+<p class="form-title">LD_BM01 &ndash; Báo cáo tổng hợp sử dụng CSVC</p>
+<p class="form-desc">Mục đích: Cung cấp cái nhìn tổng quan về tình hình sử dụng CSVC cho Ban Giám đốc.</p>
+<table>
+  <tr><td colspan="3"><b>Kỳ báo cáo:</b> Từ ___/___/______ đến ___/___/______ &nbsp;&nbsp; <b>Ngày lập:</b> ___/___/______</td></tr>
+  <tr><th>Chỉ tiêu</th><th>Giá trị</th><th>Ghi chú</th></tr>
+  <tr><td>Tổng lượt mượn trong giờ</td><td></td><td></td></tr>
+  <tr><td>Tổng lượt mượn ngoài giờ</td><td></td><td></td></tr>
+  <tr><td>Tổng hồ sơ duyệt/từ chối</td><td></td><td></td></tr>
+  <tr><td>Tổng lượt trả trễ</td><td></td><td></td></tr>
+  <tr><td>Tổng sự cố hỏng hóc</td><td></td><td></td></tr>
+  <tr><td>Tỷ lệ sử dụng CSVC (%)</td><td></td><td>= Tổng lượt mượn / Tổng CSVC khả dụng</td></tr>
+</table>
+
+<p class="form-title">LD_BM02 &ndash; Báo cáo ùn tắc đầu buổi</p>
+<p class="form-desc">Mục đích: Đánh giá mức độ ùn tắc tại quầy cấp phát đầu mỗi buổi học.</p>
+<table>
+  <tr><td colspan="3"><b>Kỳ báo cáo:</b> Từ ___/___/______ đến ___/___/______ &nbsp;&nbsp; <b>Ngày lập:</b> ___/___/______</td></tr>
+  <tr><th>Chỉ số</th><th>Giá trị</th><th>Ghi chú</th></tr>
+  <tr><td>Thời gian chờ trung bình (AvgWait)</td><td></td><td></td></tr>
+  <tr><td>Lượt chờ lớn nhất (MaxQueue)</td><td></td><td></td></tr>
+  <tr><td>Tỷ lệ xử lý trong 5 phút</td><td></td><td></td></tr>
+  <tr><td>Phiên cao điểm nhất</td><td></td><td>Ca/ngày có ùn tắc nhiều nhất</td></tr>
+</table>
+
+<!-- ==================== MẪU 3 ==================== -->
+<h2>9. Bảng yêu cầu chức năng hệ thống (Mẫu 3)</h2>
+<table>
+  <tr><th>STT</th><th>Nội dung</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Phân quyền sử dụng</td><td>Phân quyền theo vai trò NM, TB, PD, AD, LD; kiểm soát quyền chi tiết theo chức năng.</td><td></td></tr>
+  <tr><td>2</td><td>Quản lý mượn trong giờ</td><td>Đăng ký trước, phát mã lượt, check-in tại quầy, cấp phát, nhận trả, đối soát.</td><td>Giải quyết ùn tắc.</td></tr>
+  <tr><td>3</td><td>Quản lý mượn ngoài giờ</td><td>Tạo đơn, đính kèm hồ sơ theo đối tượng, duyệt cấp khoa/trường, bàn giao theo hồ sơ đã duyệt.</td><td></td></tr>
+  <tr><td>4</td><td>Quản lý danh mục CSVC</td><td>Quản lý mã CSVC, trạng thái, lịch sử thay đổi, gắn với vị trí quản lý.</td><td></td></tr>
+  <tr><td>5</td><td>Quản lý hàng đợi điện tử</td><td>Phát mã lượt nhận, tách luồng ưu tiên đăng ký trước và vãng lai, hiển thị danh sách sắp cấp phát.</td><td>Chức năng mới trên HT.</td></tr>
+  <tr><td>6</td><td>Theo dõi trạng thái mượn/trả</td><td>Người mượn và TB đều tra cứu được trạng thái lượt mượn đang mở, hồ sơ chờ duyệt, lượt trả trễ.</td><td></td></tr>
+  <tr><td>7</td><td>Quản lý thông báo hỏng hóc</td><td>Lưu sự cố phát sinh, cập nhật mức ảnh hưởng, phục vụ theo dõi vận hành.</td><td></td></tr>
+  <tr><td>8</td><td>Báo cáo và kết xuất</td><td>Báo cáo vận hành quầy, báo cáo duyệt hồ sơ, báo cáo lãnh đạo, hỗ trợ in PDF.</td><td></td></tr>
+  <tr><td>9</td><td>Sao lưu/khôi phục dữ liệu</td><td>Sao lưu định kỳ, hỗ trợ khôi phục khi sự cố.</td><td></td></tr>
+</table>
+
+<!-- ==================== MẪU 4 ==================== -->
+<h2>10. Bảng yêu cầu phi chức năng (Mẫu 4)</h2>
+<table>
+  <tr><th>STT</th><th>Nội dung</th><th>Tiêu chuẩn</th><th>Mô tả chi tiết</th><th>Ghi chú</th></tr>
+  <tr><td>1</td><td>Tiện dụng</td><td>Usability</td><td>Giao diện đơn giản, thao tác nhanh cho quầy thiết bị; mẫu đơn rõ ràng theo từng đối tượng.</td><td></td></tr>
+  <tr><td>2</td><td>Hiệu quả</td><td>Performance</td><td>Tra cứu nhanh, đáp ứng giờ cao điểm; ưu tiên xử lý lượt đăng ký trước đầu buổi.</td><td></td></tr>
+  <tr><td>3</td><td>Tương thích</td><td>Compatibility</td><td>Hoạt động ổn định trên trình duyệt phổ biến; in biểu mẫu chuẩn A4.</td><td></td></tr>
+  <tr><td>4</td><td>Khả năng mở rộng</td><td>Scalability</td><td>Dễ mở rộng thêm loại CSVC, thêm đối tượng mượn, thêm quy tắc duyệt.</td><td></td></tr>
+  <tr><td>5</td><td>An toàn dữ liệu</td><td>Reliability</td><td>Có cơ chế sao lưu/khôi phục, lưu nhật ký thay đổi quan trọng.</td><td></td></tr>
+</table>
+
+</body>
+</html>

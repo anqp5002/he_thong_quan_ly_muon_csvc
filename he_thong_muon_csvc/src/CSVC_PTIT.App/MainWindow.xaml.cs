@@ -96,11 +96,13 @@ public partial class MainWindow : Window
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
-            "Users" => new QuanLyTaiKhoanView(),       // Sprint 1 — A.5
-            "Assets" => new DanhMucCSVCView(),          // Sprint 1 — A.7
-            "Settings" => new CauHinhHeThongView(),     // Sprint 1 — A.8
-            "AuditLog" => new NhatKyView(),             // Sprint 1 — A.9
-            "TraCuu" => new Views.SV.TraCuuCSVCView(),  // Sprint 1 — B.1
+            "Users" => new QuanLyTaiKhoanView(),                       // Sprint 1 — A.5
+            "Assets" => new DanhMucCSVCView(),                          // Sprint 1 — A.7
+            "Settings" => new CauHinhHeThongView(),                     // Sprint 1 — A.8
+            "AuditLog" => new NhatKyView(),                             // Sprint 1 — A.9
+            "TraCuu" => new Views.SV.TraCuuCSVCView(),                  // Sprint 1 — B.1
+            "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(), // Dev C — Bàn giao
+            "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),// Dev C — Sự cố
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }
