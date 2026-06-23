@@ -71,6 +71,9 @@ public partial class App : Application
         await DatabaseSeeder.SeedAsync(db);
         await DatabaseSeederDevC.SeedDevCAsync(db); // Seed dữ liệu mẫu cho test chức năng Dev C
 
+        // Prevent app from shutting down immediately when LoginView is closed
+        Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
         // Mở cửa sổ đăng nhập trước
         var loginVm = ServiceProvider.GetRequiredService<LoginViewModel>();
         var loginView = new Views.LoginView(loginVm);
@@ -79,6 +82,10 @@ public partial class App : Application
         {
             // Nếu login thành công, mở MainWindow
             var mainWindow = new MainWindow();
+            Current.MainWindow = mainWindow;
+            
+            // Revert back to shutting down when the main window is closed
+            Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             mainWindow.Show();
         }
         else

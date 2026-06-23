@@ -132,11 +132,25 @@ public partial class MainWindow : Window
         {
             _authService.Logout();
             
+            // Prevent app from shutting down when closing MainWindow
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            
             var loginVm = App.ServiceProvider.GetRequiredService<LoginViewModel>();
             var loginView = new LoginView(loginVm);
-            loginView.Show();
             
-            this.Close();
+            this.Close(); // Đóng MainWindow hiện tại
+            
+            if (loginView.ShowDialog() == true)
+            {
+                var newMainWindow = new MainWindow();
+                Application.Current.MainWindow = newMainWindow;
+                Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                newMainWindow.Show();
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
         }
     }
 }

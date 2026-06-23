@@ -18,8 +18,6 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private string _password = string.Empty;
 
-    [ObservableProperty]
-    private string _errorMessage = string.Empty;
 
     [ObservableProperty]
     private bool _isLockedOut;
