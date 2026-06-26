@@ -17,7 +17,7 @@ namespace CSVC_PTIT.App.Views.DT
     /// <summary>
     /// Interaction logic for TaoDonNgoaiGioView.xaml
     /// </summary>
-    public partial class TaoDonNgoaiGioView : Window
+    public partial class TaoDonNgoaiGioView : UserControl
     {
         public TaoDonNgoaiGioView()
         {
@@ -25,3 +25,4 @@ namespace CSVC_PTIT.App.Views.DT
         }
     }
 }
+

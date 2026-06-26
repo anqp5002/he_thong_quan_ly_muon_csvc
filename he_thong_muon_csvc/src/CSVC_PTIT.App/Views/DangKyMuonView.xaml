@@ -1,8 +1,8 @@
-﻿<Window x:Class="CSVC_PTIT.App.Views.SV.DangKyMuonView"
+﻿<UserControl x:Class="CSVC_PTIT.App.Views.SV.DangKyMuonView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Đăng Ký Mượn CSVC" Height="700" Width="900">
+        >
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="16">
@@ -106,10 +106,10 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Mã CSVC (AssetId)" 
                                                 Binding="{Binding AssetId}" 
-                                                Width="150"/>
+                                                />
                             <DataGridTextColumn Header="Số lượng" 
                                                 Binding="{Binding QuantityRequested}" 
-                                                Width="100"/>
+                                                />
                             <DataGridTextColumn Header="Ghi chú" 
                                                 Binding="{Binding ItemNote}" 
                                                 Width="*"/>
@@ -129,7 +129,7 @@
              Text="{Binding GhiChu, UpdateSourceTrigger=PropertyChanged}"
              materialDesign:HintAssist.Hint="Ghi chú"
              Style="{StaticResource MaterialDesignOutlinedTextBox}"
-             AcceptsReturn="True" Height="80"/>
+             AcceptsReturn="True" />
 
     <TextBlock Text="{Binding ThongBao}" Foreground="Green"
                Margin="0,0,0,8" FontWeight="Bold"/>
@@ -149,4 +149,5 @@
 
         </Grid>
     </ScrollViewer>
-</Window>
+</UserControl>
+

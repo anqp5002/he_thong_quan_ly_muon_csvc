@@ -17,7 +17,7 @@ namespace CSVC_PTIT.App.Views.SV
     /// <summary>
     /// Interaction logic for TheoDoiDonMuonView.xaml
     /// </summary>
-    public partial class TheoDoiDonMuonView : Window
+    public partial class TheoDoiDonMuonView : UserControl
     {
         public TheoDoiDonMuonView()
         {
@@ -25,3 +25,4 @@ namespace CSVC_PTIT.App.Views.SV
         }
     }
 }
+

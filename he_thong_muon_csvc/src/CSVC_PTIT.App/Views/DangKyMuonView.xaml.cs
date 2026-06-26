@@ -17,7 +17,7 @@ namespace CSVC_PTIT.App.Views.SV
     /// <summary>
     /// Interaction logic for DangKyMuonView.xaml
     /// </summary>
-    public partial class DangKyMuonView : Window
+    public partial class DangKyMuonView : UserControl
     {
         public DangKyMuonView()
         {
@@ -25,3 +25,4 @@ namespace CSVC_PTIT.App.Views.SV
         }
     }
 }
+

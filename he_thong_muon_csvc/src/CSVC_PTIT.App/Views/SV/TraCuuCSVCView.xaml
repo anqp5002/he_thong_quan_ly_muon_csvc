@@ -37,8 +37,8 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
@@ -118,16 +118,16 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Mã CSVC"
                                             Binding="{Binding AssetCode}"
-                                            Width="110" />
+                                            />
                         <DataGridTextColumn Header="Tên CSVC"
                                             Binding="{Binding AssetName}"
                                             Width="*" />
                         <DataGridTextColumn Header="Loại"
                                             Binding="{Binding Category.Name}"
-                                            Width="140" />
+                                            />
                         <DataGridTextColumn Header="SL khả dụng"
                                             Binding="{Binding AvailableQuantity}"
-                                            Width="110">
+                                            >
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -142,7 +142,7 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="SL tổng"
                                             Binding="{Binding TotalQuantity}"
-                                            Width="90">
+                                            >
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center" />
@@ -151,8 +151,8 @@
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Vị trí"
                                             Binding="{Binding Location}"
-                                            Width="120" />
-                        <DataGridTemplateColumn Header="Trạng thái" Width="110">
+                                            />
+                        <DataGridTemplateColumn Header="Trạng thái" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border CornerRadius="4" Padding="6,2"

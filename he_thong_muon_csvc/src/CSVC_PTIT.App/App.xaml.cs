@@ -52,6 +52,9 @@ public partial class App : Application
         services.AddScoped<IDamageReportService, DamageReportService>();
         services.AddScoped<IReportService, ReportService>();
 
+        // --- Dev B Services ---
+        services.AddScoped<IBorrowService, BorrowService>();
+
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
         services.AddTransient<DashboardViewModel>();
@@ -62,6 +65,9 @@ public partial class App : Application
         services.AddTransient<CauHinhHeThongViewModel>();   // Sprint 1 — A.8
         services.AddTransient<NhatKyViewModel>();           // Sprint 1 — A.9
         services.AddTransient<TraCuuCSVCViewModel>();       // Sprint 1 — B.1
+        services.AddTransient<CSVC_PTIT.App.ViewModels.DT.TaoDonNgoaiGioViewModel>();
+        services.AddTransient<CSVC_PTIT.App.ViewModels.SV.DangKyMuonViewModel>();
+        services.AddTransient<CSVC_PTIT.App.ViewModels.SV.TheoDoiDonMuonViewModel>();
 
         ServiceProvider = services.BuildServiceProvider();
 

@@ -52,8 +52,8 @@ public partial class MainWindow : Window
                 }
                 else if (roleCode == "QL") // Quản lý
                 {
-                    // Không xem User, Config, AuditLog
-                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog")
+                    // Không xem User, Config, AuditLog, và các tính năng tạo đơn của Sinh viên
+                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog" || tag == "TraCuu" || tag == "CreateRequest" || tag == "BorrowRequests")
                     {
                         listBoxItem.Visibility = Visibility.Collapsed;
                     }
@@ -104,7 +104,11 @@ public partial class MainWindow : Window
             "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),
             "BaoCao" => new CSVC_PTIT.App.Views.QL.BaoCaoTonKhoView(),
             "DoiSoat" => new CSVC_PTIT.App.Views.QL.DoiSoatCSVCView(),
-            "TraCuu" => new Views.SV.TraCuuCSVCView(),
+            "TraCuu" => new Views.SV.TraCuuCSVCView { DataContext = App.ServiceProvider.GetRequiredService<ViewModels.TraCuuCSVCViewModel>() },
+            "BorrowRequests" => new Views.SV.TheoDoiDonMuonView { DataContext = App.ServiceProvider.GetRequiredService<ViewModels.SV.TheoDoiDonMuonViewModel>() },
+            "CreateRequest" => _authService.CurrentUser?.Role?.RoleCode == "DT" 
+                               ? new Views.DT.TaoDonNgoaiGioView { DataContext = App.ServiceProvider.GetRequiredService<ViewModels.DT.TaoDonNgoaiGioViewModel>() } 
+                               : new Views.SV.DangKyMuonView { DataContext = App.ServiceProvider.GetRequiredService<ViewModels.SV.DangKyMuonViewModel>() },
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }

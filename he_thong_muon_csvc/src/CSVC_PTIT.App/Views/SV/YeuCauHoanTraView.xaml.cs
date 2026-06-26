@@ -17,7 +17,7 @@ namespace CSVC_PTIT.App.Views.SV
     /// <summary>
     /// Interaction logic for YeuCauHoanTraView.xaml
     /// </summary>
-    public partial class YeuCauHoanTraView : Window
+    public partial class YeuCauHoanTraView : UserControl
     {
         public YeuCauHoanTraView()
         {
@@ -25,3 +25,4 @@ namespace CSVC_PTIT.App.Views.SV
         }
     }
 }
+
