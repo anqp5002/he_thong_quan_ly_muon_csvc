@@ -21,6 +21,7 @@ public partial class MainWindow : Window
         _authService = App.ServiceProvider.GetRequiredService<IAuthService>();
         
         SetupAuthUI();
+        LoadNotificationCountAsync();
 
         // Mặc định hiển thị Dashboard khi app mở
         MainContent.Content = new DashboardView();
@@ -34,7 +35,6 @@ public partial class MainWindow : Window
         TxtUserName.Text = user.FullName;
         TxtUserRole.Text = user.Role?.RoleName ?? "Chưa rõ";
 
-        // Logic ẩn/hiện menu dựa vào role (tạm ẩn các item bằng cách duyệt tag)
         var roleCode = user.Role?.RoleCode;
 
         foreach (var item in MenuList.Items)
@@ -42,33 +42,59 @@ public partial class MainWindow : Window
             if (item is ListBoxItem listBoxItem)
             {
                 var tag = listBoxItem.Tag?.ToString();
-                if (roleCode == "SV" || roleCode == "DT") // Sinh viên, Đoàn thể
+
+                // Mặc định ẩn các menu đặc quyền
+                if (tag == "DuyetDon" || tag == "DonDaDuyet")
+                    listBoxItem.Visibility = Visibility.Collapsed;
+
+                if (roleCode == "SV" || roleCode == "DT")
                 {
-                    // Chỉ xem Tổng quan, Đơn mượn, Sự cố
-                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog" || tag == "Assets" || tag == "Checkout")
+                    // SV/DT: Chỉ xem Tổng quan, Tra cứu, Đơn mượn, Sự cố
+                    if (tag == "Users" || tag == "Settings" || tag == "AuditLog" 
+                        || tag == "Assets" || tag == "Checkout")
                     {
                         listBoxItem.Visibility = Visibility.Collapsed;
                     }
                 }
-                else if (roleCode == "QL") // Quản lý
+                else if (roleCode == "QL")
                 {
-                    // Không xem User, Config, AuditLog
+                    // QL: Xem Tổng quan, CSVC, Tra cứu, Duyệt đơn, Đơn đã duyệt, Bàn giao, Sự cố
                     if (tag == "Users" || tag == "Settings" || tag == "AuditLog")
                     {
                         listBoxItem.Visibility = Visibility.Collapsed;
                     }
+                    // Mở 2 menu đặc quyền cho QL
+                    if (tag == "DuyetDon" || tag == "DonDaDuyet")
+                    {
+                        listBoxItem.Visibility = Visibility.Visible;
+                    }
                 }
+                // AD (Admin): Thấy tất cả trừ DuyetDon/DonDaDuyet (giữ Collapsed mặc định)
             }
         }
     }
 
+    private async void LoadNotificationCountAsync()
+    {
+        try
+        {
+            var user = _authService.CurrentUser;
+            if (user == null) return;
+
+            using var scope = App.ServiceProvider.CreateScope();
+            var notifService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+            var count = await notifService.GetUnreadCountAsync(user.UserId);
+
+            NotificationBadge.Badge = count > 0 ? count.ToString() : null;
+        }
+        catch { /* Bỏ qua lỗi khi khởi tạo */ }
+    }
+
     /// <summary>
     /// Xử lý khi user click vào menu item trên sidebar.
-    /// Đọc Tag của item được chọn → tạo UserControl tương ứng → gán vào ContentControl.
     /// </summary>
     private void Menu_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // Guard: XAML kích hoạt sự kiện này trước khi InitializeComponent() hoàn tất
         if (TxtPageTitle is null || MainContent is null)
             return;
 
@@ -77,7 +103,6 @@ public partial class MainWindow : Window
 
         var tag = selectedItem.Tag?.ToString();
 
-        // Đổi tiêu đề trang trên top bar
         TxtPageTitle.Text = tag switch
         {
             "Dashboard" => "Tổng quan",
@@ -89,22 +114,36 @@ public partial class MainWindow : Window
             "Settings" => "Cấu hình hệ thống",
             "AuditLog" => "Nhật ký hoạt động",
             "TraCuu" => "Tra cứu CSVC",
+            "DuyetDon" => "Duyệt đơn mượn",
+            "DonDaDuyet" => "Đơn mượn đã duyệt",
             _ => "Tổng quan"
         };
 
-        // Đổi nội dung vùng Content bên phải
         MainContent.Content = tag switch
         {
             "Dashboard" => new DashboardView(),
-            "Users" => new QuanLyTaiKhoanView(),                       // Sprint 1 — A.5
-            "Assets" => new DanhMucCSVCView(),                          // Sprint 1 — A.7
-            "Settings" => new CauHinhHeThongView(),                     // Sprint 1 — A.8
-            "AuditLog" => new NhatKyView(),                             // Sprint 1 — A.9
-            "TraCuu" => new Views.SV.TraCuuCSVCView(),                  // Sprint 1 — B.1
-            "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(), // Dev C — Bàn giao
-            "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),// Dev C — Sự cố
+            "Users" => new QuanLyTaiKhoanView(),
+            "Assets" => new DanhMucCSVCView(),
+            "Settings" => new CauHinhHeThongView(),
+            "AuditLog" => new NhatKyView(),
+            "TraCuu" => new Views.SV.TraCuuCSVCView(),
+            "BorrowRequests" => new Views.SV.TheoDoiDonMuonView(),
+            "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(),
+            "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),
+            "DuyetDon" => new CSVC_PTIT.App.Views.DT.DanhSachDonCanDuyetView(),
+            "DonDaDuyet" => new CSVC_PTIT.App.Views.QL.DanhSachDonDaDuyetView(),
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
+    }
+
+    /// <summary>
+    /// Xử lý khi bấm nút chuông Thông báo.
+    /// </summary>
+    private void BtnNotification_Click(object sender, RoutedEventArgs e)
+    {
+        TxtPageTitle.Text = "Thông báo";
+        MainContent.Content = new Views.ThongBaoView();
+        MenuList.SelectedIndex = -1; // Bỏ chọn menu sidebar
     }
 
     private void BtnChangePassword_Click(object sender, RoutedEventArgs e)
@@ -117,9 +156,6 @@ public partial class MainWindow : Window
         dialog.ShowDialog();
     }
 
-    /// <summary>
-    /// Xử lý nút Đăng xuất.
-    /// </summary>
     private void BtnLogout_Click(object sender, RoutedEventArgs e)
     {
         var result = MessageBox.Show(
@@ -131,14 +167,12 @@ public partial class MainWindow : Window
         if (result == MessageBoxResult.Yes)
         {
             _authService.Logout();
-            
-            // Prevent app from shutting down when closing MainWindow
             Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             
             var loginVm = App.ServiceProvider.GetRequiredService<LoginViewModel>();
             var loginView = new LoginView(loginVm);
             
-            this.Close(); // Đóng MainWindow hiện tại
+            this.Close();
             
             if (loginView.ShowDialog() == true)
             {

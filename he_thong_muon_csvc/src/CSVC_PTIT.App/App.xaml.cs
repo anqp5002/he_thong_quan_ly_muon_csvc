@@ -41,16 +41,17 @@ public partial class App : Application
             options.UseSqlServer(ConnectionString));
 
         // === TẦNG CORE: Business Services ===
-        services.AddSingleton<IAuthService, AuthService>(); // Auth dùng chung
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IAssetService, AssetService>();
-        services.AddScoped<IAuditLogService, AuditLogService>(); // Sprint 1 — A.9
-
-        // --- Dev C Services ---
-        services.AddScoped<ICheckoutService, CheckoutService>();
-        services.AddScoped<IReturnService, ReturnService>();
-        services.AddScoped<IDamageReportService, DamageReportService>();
-        services.AddScoped<IReportService, ReportService>();
+        services.AddSingleton<IAuthService, AuthService>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IAssetService, AssetService>();
+        services.AddTransient<IBorrowService, BorrowService>();
+        services.AddTransient<ICheckoutService, CheckoutService>();
+        services.AddTransient<IReturnService, ReturnService>();
+        services.AddTransient<IDamageReportService, DamageReportService>();
+        services.AddTransient<IReportService, ReportService>();
+        services.AddTransient<IAuditLogService, AuditLogService>();
+        services.AddTransient<IEmailService, EmailService>();
+        services.AddTransient<INotificationService, NotificationService>();
 
         // === TẦNG APP: ViewModels ===
         services.AddTransient<MainViewModel>();
@@ -62,6 +63,11 @@ public partial class App : Application
         services.AddTransient<CauHinhHeThongViewModel>();   // Sprint 1 — A.8
         services.AddTransient<NhatKyViewModel>();           // Sprint 1 — A.9
         services.AddTransient<TraCuuCSVCViewModel>();       // Sprint 1 — B.1
+
+        // Mới bổ sung cho Sprint 2 & 1
+        services.AddTransient<ViewModels.DT.DanhSachDonCanDuyetViewModel>();
+        services.AddTransient<ViewModels.QL.DanhSachDonDaDuyetViewModel>();
+        services.AddTransient<ThongBaoViewModel>();
 
         ServiceProvider = services.BuildServiceProvider();
 
