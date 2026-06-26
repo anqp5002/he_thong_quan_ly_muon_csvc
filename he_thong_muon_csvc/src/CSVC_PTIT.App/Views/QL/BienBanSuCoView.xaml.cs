@@ -32,12 +32,12 @@ public partial class BienBanSuCoView : UserControl
 
     private void LoadData()
     {
-        // Chỉ lấy những đơn mượn đang trong trạng thái hoạt động (CheckedOut - đang mượn/chưa trả xong)
+        // Lấy những đơn mượn đang hoạt động (Approved hoặc CheckedOut)
         var activeRequests = _context.BorrowRequests
             .Include(r => r.Requester)
             .Include(r => r.BorrowRequestAssets)
             .ThenInclude(ra => ra.Asset)
-            .Where(r => r.Status == RequestStatus.CheckedOut)
+            .Where(r => r.Status == RequestStatus.Approved || r.Status == RequestStatus.CheckedOut)
             .ToList();
             
         CbbRequest.ItemsSource = activeRequests;

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="CSVC_PTIT.App.Views.SV.TraCuuCSVCView"
+<UserControl x:Class="CSVC_PTIT.App.Views.SV.TraCuuCSVCView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -53,7 +53,7 @@
                           Margin="0,0,12,0"
                           ItemsSource="{Binding Categories}"
                           SelectedItem="{Binding SelectedCategory}"
-                          DisplayMemberPath="Name"
+                          DisplayMemberPath="CategoryName"
                           md:HintAssist.Hint="Loại CSVC"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
@@ -123,7 +123,7 @@
                                             Binding="{Binding AssetName}"
                                             Width="*" />
                         <DataGridTextColumn Header="Loại"
-                                            Binding="{Binding Category.Name}"
+                                            Binding="{Binding Category.CategoryName}"
                                             Width="140" />
                         <DataGridTextColumn Header="SL khả dụng"
                                             Binding="{Binding AvailableQuantity}"
@@ -150,7 +150,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
                         <DataGridTextColumn Header="Vị trí"
-                                            Binding="{Binding Location}"
+                                            Binding="{Binding CurrentRoom.RoomName}"
                                             Width="120" />
                         <DataGridTemplateColumn Header="Trạng thái" Width="110">
                             <DataGridTemplateColumn.CellTemplate>

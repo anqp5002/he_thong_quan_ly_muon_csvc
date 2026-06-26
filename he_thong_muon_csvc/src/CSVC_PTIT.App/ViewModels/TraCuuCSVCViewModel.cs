@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CSVC_PTIT.Core.Interfaces;
 using CSVC_PTIT.Data.Entities;
@@ -93,6 +93,10 @@ public partial class TraCuuCSVCViewModel : ViewModelBase
 
             var all = await assetService.GetAllAsync();
             _allAssets = all.Where(a => a.AvailableQuantity > 0).ToList();
+
+            // Load danh mục loại CSVC cho combobox lọc
+            Categories = await assetService.GetCategoriesAsync();
+
             ApplyFilter();
         }
         catch (Exception ex)
