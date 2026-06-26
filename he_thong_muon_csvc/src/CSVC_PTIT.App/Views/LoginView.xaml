@@ -81,6 +81,12 @@
                     </Button.Style>
                 </Button>
 
+                <Button Content="Quên mật khẩu?" 
+                        Command="{Binding ForgotPasswordCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        Margin="0,8,0,0" />
+
                 <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
                              Value="0" IsIndeterminate="True" 
                              Margin="0,16,0,0" 

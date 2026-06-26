@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CSVC_PTIT.Core.DTOs;
 using CSVC_PTIT.Core.Interfaces;
@@ -33,11 +33,26 @@ public partial class DangKyMuonViewModel : ObservableObject
     [ObservableProperty] private bool _dangXuLy;
 
     // Tạm hardcode userId = 1, sau này lấy từ session
-    private readonly int _currentUserId = 1;
+    private readonly IAuthService _authService;
+    private readonly IAssetService _assetService;
 
-    public DangKyMuonViewModel(IBorrowService borrowService)
+    [ObservableProperty]
+    private ObservableCollection<CSVC_PTIT.Data.Entities.Asset> _availableAssets = new();
+
+    public DangKyMuonViewModel(IBorrowService borrowService, IAuthService authService, IAssetService assetService)
     {
         _borrowService = borrowService;
+        _authService = authService;
+        _assetService = assetService;
+
+        LoadAssetsAsync();
+    }
+
+    private async void LoadAssetsAsync()
+    {
+        var assets = await _assetService.GetAllAsync();
+        // Chỉ lấy những tài sản khả dụng > 0
+        AvailableAssets = new ObservableCollection<CSVC_PTIT.Data.Entities.Asset>(assets.Where(a => a.AvailableQuantity > 0));
     }
 
     [RelayCommand]
@@ -71,24 +86,48 @@ public partial class DangKyMuonViewModel : ObservableObject
             return;
         }
 
+        if (DanhSachCsvc.Any(x => x.AssetId == 0))
+        {
+            ThongBao = "Vui lòng chọn Tên CSVC hợp lệ trong bảng!";
+            return;
+        }
+
         DangXuLy = true;
         ThongBao = string.Empty;
 
-        var dto = new CreateBorrowRequestDto
+        var user = _authService.CurrentUser;
+        if (user == null) 
         {
-            RequesterId = _currentUserId,
-            ContactPhone = SoDienThoai,
-            Title = $"{MonHoc} - {PhongHoc}",
-            Purpose = $"Mượn CSVC cho môn {MonHoc}",
-            RequestNote = GhiChu,
-            BorrowStartAt = NgayMuon.Date + GioMuon.TimeOfDay,
-            BorrowEndAt = NgayMuon.Date + GioTra.TimeOfDay,
-            Assets = DanhSachCsvc.ToList()
-        };
+            ThongBao = "Bạn chưa đăng nhập!";
+            DangXuLy = false;
+            return;
+        }
 
-        DonVuaTao = await _borrowService.CreateInClassRequestAsync(dto);
-        ThongBao = $"Gửi đơn thành công! Mã đơn: {DonVuaTao?.RequestCode}. Bạn có thể xuất PDF ngay bây giờ.";
-        DangXuLy = false;
+        try
+        {
+            var dto = new CreateBorrowRequestDto
+            {
+                RequesterId = user.UserId,
+                ContactPhone = SoDienThoai,
+                Title = $"{MonHoc} - {PhongHoc}",
+                Purpose = $"Mượn CSVC cho môn {MonHoc}",
+                RequestNote = GhiChu,
+                BorrowStartAt = NgayMuon.Date + GioMuon.TimeOfDay,
+                BorrowEndAt = NgayMuon.Date + GioTra.TimeOfDay,
+                Assets = DanhSachCsvc.ToList()
+            };
+
+            DonVuaTao = await _borrowService.CreateInClassRequestAsync(dto);
+            ThongBao = $"Gửi đơn thành công! Mã đơn: {DonVuaTao?.RequestCode}. Bạn có thể xuất PDF ngay bây giờ.";
+        }
+        catch (Exception ex)
+        {
+            ThongBao = $"Lỗi: {ex.Message}";
+        }
+        finally
+        {
+            DangXuLy = false;
+        }
     }
     // Đơn vừa tạo (dùng để xuất PDF)
     [ObservableProperty] private CSVC_PTIT.Data.Entities.BorrowRequest? _donVuaTao;

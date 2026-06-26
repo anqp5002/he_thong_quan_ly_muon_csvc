@@ -64,7 +64,7 @@ public partial class MainWindow : Window
                         listBoxItem.Visibility = Visibility.Collapsed;
                     }
                     // Mở 2 menu đặc quyền cho QL
-                    if (tag == "DuyetDon" || tag == "DonDaDuyet")
+                    if (tag == "DuyetDon")
                     {
                         listBoxItem.Visibility = Visibility.Visible;
                     }
@@ -115,7 +115,6 @@ public partial class MainWindow : Window
             "AuditLog" => "Nhật ký hoạt động",
             "TraCuu" => "Tra cứu CSVC",
             "DuyetDon" => "Duyệt đơn mượn",
-            "DonDaDuyet" => "Đơn mượn đã duyệt",
             _ => "Tổng quan"
         };
 
@@ -131,7 +130,6 @@ public partial class MainWindow : Window
             "Checkout" => new CSVC_PTIT.App.Views.QL.BanGiaoCSVCView(),
             "Incidents" => new CSVC_PTIT.App.Views.QL.BienBanSuCoView(),
             "DuyetDon" => new CSVC_PTIT.App.Views.DT.DanhSachDonCanDuyetView(),
-            "DonDaDuyet" => new CSVC_PTIT.App.Views.QL.DanhSachDonDaDuyetView(),
             _ => new PlaceholderView(TxtPageTitle.Text)
         };
     }

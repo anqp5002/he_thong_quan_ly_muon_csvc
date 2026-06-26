@@ -14,6 +14,12 @@ public interface IAuthService
     /// <summary>Đổi mật khẩu</summary>
     Task ChangePasswordAsync(int userId, string oldPassword, string newPassword);
 
+    /// <summary>Gửi mã OTP qua email để quên mật khẩu</summary>
+    Task SendForgotPasswordOtpAsync(string email);
+
+    /// <summary>Đặt lại mật khẩu bằng mã OTP</summary>
+    Task ResetPasswordWithOtpAsync(string email, string otp, string newPassword);
+
     /// <summary>Đăng xuất — xóa session</summary>
     void Logout();
 

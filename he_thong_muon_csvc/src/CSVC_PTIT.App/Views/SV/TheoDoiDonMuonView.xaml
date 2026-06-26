@@ -1,8 +1,8 @@
-﻿<Window x:Class="CSVC_PTIT.App.Views.SV.TheoDoiDonMuonView"
+<UserControl x:Class="CSVC_PTIT.App.Views.SV.TheoDoiDonMuonView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Theo Dõi Đơn Mượn" Height="600" Width="900">
+        Height="600" Width="900">
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
@@ -17,11 +17,15 @@
                    Margin="0,0,0,16"/>
 
         <!-- Nút tải -->
-        <Button Grid.Row="1" Content="Tải danh sách"
-                Command="{Binding TaiDanhSachCommand}"
-                Style="{StaticResource MaterialDesignRaisedButton}"
-                HorizontalAlignment="Left"
-                Margin="0,0,0,16"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Content="Tải danh sách"
+                    Command="{Binding TaiDanhSachCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Margin="0,0,16,0"/>
+            <Button Content="Tạo đơn mới"
+                    Command="{Binding TaoDonMoiCommand}"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}"/>
+        </StackPanel>
 
         <!-- Bảng danh sách đơn -->
         <DataGrid Grid.Row="2"
@@ -35,7 +39,33 @@
                 <DataGridTextColumn Header="Mã đơn" Binding="{Binding RequestCode}" Width="100"/>
                 <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title}" Width="200"/>
                 <DataGridTextColumn Header="Loại đơn" Binding="{Binding RequestType}" Width="120"/>
-                <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="120"/>
+                <DataGridTemplateColumn Header="Trạng thái" Width="130">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Status}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontWeight" Value="Normal"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Approved">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="#FFA500"/> <!-- Orange -->
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Rejected">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="Foreground" Value="Red"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Ngày tạo" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
                 <DataGridTextColumn Header="Bắt đầu" Binding="{Binding BorrowStartAt, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
                 <DataGridTextColumn Header="Kết thúc" Binding="{Binding BorrowEndAt, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
@@ -43,4 +73,4 @@
         </DataGrid>
 
     </Grid>
-</Window>
+</UserControl>

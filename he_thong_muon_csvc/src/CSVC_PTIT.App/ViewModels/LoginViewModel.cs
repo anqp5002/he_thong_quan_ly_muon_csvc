@@ -58,16 +58,41 @@ public partial class LoginViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
-            if (_authService.LockoutEndTime.HasValue)
+            if (ex.Message == "MUST_CHANGE_PASSWORD")
             {
-                StartLockoutTimer();
+                // Bật màn hình yêu cầu đổi mật khẩu
+                var forceChangeWindow = new Views.ForceChangePasswordWindow(Email, _authService);
+                if (forceChangeWindow.ShowDialog() == true)
+                {
+                    // Đổi pass thành công, cho phép vào app
+                    OnLoginSuccess?.Invoke();
+                }
+                else
+                {
+                    _authService.Logout();
+                    ErrorMessage = "Bạn phải đổi mật khẩu để tiếp tục.";
+                }
+            }
+            else
+            {
+                ErrorMessage = ex.Message;
+                if (_authService.LockoutEndTime.HasValue)
+                {
+                    StartLockoutTimer();
+                }
             }
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private void ForgotPassword()
+    {
+        var forgotWindow = new Views.ForgotPasswordWindow(_authService, Email);
+        forgotWindow.ShowDialog();
     }
 
     private void StartLockoutTimer()

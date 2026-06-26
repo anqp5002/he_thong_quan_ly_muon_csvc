@@ -19,6 +19,7 @@ public partial class BanGiaoCSVCView : UserControl
 
     private BorrowRequest? _selectedRequest;
     private int _lastCheckoutId = 0;
+    private List<BorrowRequest> _allRequests = new();
 
     public BanGiaoCSVCView()
     {
@@ -34,14 +35,32 @@ public partial class BanGiaoCSVCView : UserControl
     private void LoadData()
     {
         // Tải danh sách đơn đã duyệt (C.1)
-        var requests = _context.BorrowRequests
+        _allRequests = _context.BorrowRequests
             .Include(r => r.Requester)
             .Include(r => r.BorrowRequestAssets)
             .ThenInclude(ra => ra.Asset)
             .Where(r => r.Status == RequestStatus.Approved)
             .ToList();
         
-        GridDanhSachDon.ItemsSource = requests;
+        GridDanhSachDon.ItemsSource = _allRequests;
+    }
+
+    private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var text = TxtSearch.Text.Trim().ToLower();
+        if (string.IsNullOrEmpty(text))
+        {
+            GridDanhSachDon.ItemsSource = _allRequests;
+        }
+        else
+        {
+            var filtered = _allRequests.Where(r => 
+                (r.RequestCode != null && r.RequestCode.ToLower().Contains(text)) ||
+                (r.Requester != null && r.Requester.StudentCode != null && r.Requester.StudentCode.ToLower().Contains(text)) ||
+                (r.Requester != null && r.Requester.FullName != null && r.Requester.FullName.ToLower().Contains(text))
+            ).ToList();
+            GridDanhSachDon.ItemsSource = filtered;
+        }
     }
 
     // Chuyển dữ liệu sang Tab 2 (Kiểm tra khả dụng)
@@ -52,6 +71,11 @@ public partial class BanGiaoCSVCView : UserControl
             _selectedRequest = selected;
             // Hiển thị danh sách tài sản yêu cầu kèm tồn kho hiện tại (C.2)
             GridKiemTra.ItemsSource = selected.BorrowRequestAssets;
+            // Chuyển sang Tab 2 tự động
+            if (this.FindName("TabKiemTra") is TabItem tabKiemTra)
+            {
+                tabKiemTra.IsSelected = true;
+            }
         }
     }
 
