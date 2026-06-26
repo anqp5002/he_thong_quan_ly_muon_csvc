@@ -98,7 +98,7 @@ public static class DatabaseSeeder
             { 
                 Username = "ql01", 
                 PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword("123456"), 
-                Email = "giahq@ptithcm.edu.vn", 
+                Email = "anpham5002@gmail.com", 
                 FullName = "Hoàng Quốc Gia", 
                 RoleId = 3, 
                 BorrowerType = BorrowerType.Staff, 

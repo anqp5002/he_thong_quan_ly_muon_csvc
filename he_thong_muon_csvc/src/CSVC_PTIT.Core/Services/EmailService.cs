@@ -11,7 +11,7 @@ public class EmailService : IEmailService
 {
     // FIXME: Điền thông tin Gmail thật của bạn vào đây (và không push lên git)
     // Email gốc để gửi:
-    private const string SmtpUser = "your.email@gmail.com"; 
+    private const string SmtpUser = "anpham5002@gmail.com"; 
     
     // Mật khẩu ứng dụng (App Password) 16 ký tự của Google, KHÔNG phải mật khẩu đăng nhập thông thường:
     private const string SmtpPass = "xxxx xxxx xxxx xxxx"; 

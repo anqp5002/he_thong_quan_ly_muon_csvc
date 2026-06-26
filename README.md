@@ -38,7 +38,8 @@ H? th?ng h? tr? 4 vai trò chính:
 H? th?ng dã du?c kh?i t?o (seed) s?n m?t s? tài kho?n theo các phân quy?n d? thu?n ti?n cho vi?c test:
 
 - **Admin**: admin@ptithcm.edu.vn / M?t kh?u: admin123
-- **Qu?n lý CSVC**: giahq@ptithcm.edu.vn, habt@ptithcm.edu.vn / M?t kh?u: 123456
+- **Qu?n lý CSVC**: anpham5002@gmail.com, habt@ptithcm.edu.vn / M?t kh?u: 123456
 - **Sinh viên**: n23dccn001@student.ptithcm.edu.vn, n23dccn002@student.ptithcm.edu.vn / M?t kh?u: 123456
 - **Gi?ng viên**: chaupm@ptithcm.edu.vn, dunglh@ptithcm.edu.vn / M?t kh?u: 123456
 - **Ðoàn th? (CLB, Ð?i nhóm)**: n22dccn010@student.ptithcm.edu.vn (LCÐ), n23dccn020@student.ptithcm.edu.vn (CLB) / M?t kh?u: 123456
+

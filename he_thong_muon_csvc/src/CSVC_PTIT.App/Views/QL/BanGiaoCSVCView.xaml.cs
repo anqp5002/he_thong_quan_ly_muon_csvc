@@ -36,6 +36,7 @@ public partial class BanGiaoCSVCView : UserControl
     {
         // Tải danh sách đơn đã duyệt (C.1)
         _allRequests = _context.BorrowRequests
+            .AsNoTracking()
             .Include(r => r.Requester)
             .Include(r => r.BorrowRequestAssets)
             .ThenInclude(ra => ra.Asset)

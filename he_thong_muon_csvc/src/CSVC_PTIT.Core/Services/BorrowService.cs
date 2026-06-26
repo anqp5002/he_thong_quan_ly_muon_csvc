@@ -88,6 +88,7 @@ public class BorrowService : IBorrowService
     public async Task<List<BorrowRequest>> GetRequestsByUserAsync(int userId)
     {
         return await _context.BorrowRequests
+            .AsNoTracking()
             .Include(r => r.BorrowRequestAssets)
                 .ThenInclude(a => a.Asset)
             .Where(r => r.RequesterId == userId)
@@ -143,6 +144,7 @@ public class BorrowService : IBorrowService
     public async Task<List<BorrowRequest>> GetRequestsByStatusAsync(RequestStatus status)
     {
         return await _context.BorrowRequests
+            .AsNoTracking()
             .Include(r => r.Requester)
             .Include(r => r.BorrowRequestAssets)
                 .ThenInclude(a => a.Asset)
