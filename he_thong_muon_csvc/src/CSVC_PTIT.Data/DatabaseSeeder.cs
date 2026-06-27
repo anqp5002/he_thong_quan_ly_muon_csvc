@@ -204,7 +204,13 @@ public static class DatabaseSeeder
             rooms.Add(new Room { RoomCode = "P.201", RoomName = "Phòng học P.201", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
             rooms.Add(new Room { RoomCode = "P.202", RoomName = "Phòng học P.202", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
 
-            context.Rooms.AddRange(rooms);
+            var existingRoomCodes = context.Rooms.Select(r => r.RoomCode).ToHashSet();
+            var roomsToAdd = rooms.Where(r => !existingRoomCodes.Contains(r.RoomCode)).ToList();
+            
+            if (roomsToAdd.Any())
+            {
+                context.Rooms.AddRange(roomsToAdd);
+            }
         }
 
         if (!context.Assets.Any())
