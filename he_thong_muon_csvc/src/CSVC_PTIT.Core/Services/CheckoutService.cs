@@ -24,6 +24,8 @@ public class CheckoutService : ICheckoutService
         var request = await _context.BorrowRequests
             .Include(r => r.BorrowRequestAssets)
             .ThenInclude(ra => ra.Asset)
+            .Include(r => r.BorrowRequestRooms)
+                .ThenInclude(rr => rr.Room)
             .FirstOrDefaultAsync(r => r.RequestId == requestId);
 
         if (request == null) throw new Exception("Không tìm thấy đơn mượn.");
@@ -52,6 +54,28 @@ public class CheckoutService : ICheckoutService
                 warnings.Add($"Đơn {conflict.BorrowRequest.RequestCode} ({conflict.BorrowRequest.BorrowStartAt:dd/MM HH:mm} - {conflict.BorrowRequest.BorrowEndAt:dd/MM HH:mm}): {string.Join(", ", overlappingAssets)}");
             }
             throw new Exception($"⚠️ CẢNH BÁO XUNG ĐỘT: Các CSVC sau đang được mượn bởi đơn khác cùng thời gian:\n" + string.Join("\n", warnings) + "\n\nVui lòng kiểm tra lại trước khi bàn giao.");
+        }
+
+        // Kiểm tra xung đột: Phòng đã được bàn giao cho đơn khác
+        if (request.BorrowRequestRooms.Any())
+        {
+            var roomIds = request.BorrowRequestRooms.Select(rr => rr.RoomId).ToList();
+            var conflictingRoomCheckouts = await _context.Checkouts
+                .Include(c => c.BorrowRequest)
+                    .ThenInclude(br => br.BorrowRequestRooms)
+                        .ThenInclude(brr => brr.Room)
+                .Where(c => c.BorrowRequest.Status == RequestStatus.CheckedOut
+                    && c.BorrowRequest.BorrowRequestRooms.Any(rr => roomIds.Contains(rr.RoomId))
+                    && c.BorrowRequest.BorrowStartAt < request.BorrowEndAt
+                    && c.BorrowRequest.BorrowEndAt > request.BorrowStartAt)
+                .ToListAsync();
+
+            if (conflictingRoomCheckouts.Any())
+            {
+                var conflict = conflictingRoomCheckouts.First();
+                var roomName = conflict.BorrowRequest.BorrowRequestRooms.FirstOrDefault(rr => roomIds.Contains(rr.RoomId))?.Room?.RoomCode ?? "Phòng";
+                throw new Exception($"⚠️ XUNG ĐỘT PHÒNG: {roomName} đang được mượn bởi đơn {conflict.BorrowRequest.RequestCode} từ {conflict.BorrowRequest.BorrowStartAt:HH:mm} đến {conflict.BorrowRequest.BorrowEndAt:HH:mm}. Không thể bàn giao.");
+            }
         }
 
         var checkout = new Checkout

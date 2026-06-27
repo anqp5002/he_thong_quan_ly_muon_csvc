@@ -63,6 +63,14 @@ public class BorrowService : IBorrowService
             });
         }
 
+        if (dto.RoomId.HasValue)
+        {
+            request.BorrowRequestRooms.Add(new BorrowRequestRoom
+            {
+                RoomId = dto.RoomId.Value
+            });
+        }
+
         _context.BorrowRequests.Add(request);
         await _context.SaveChangesAsync();
 
@@ -144,6 +152,14 @@ public class BorrowService : IBorrowService
             });
         }
 
+        if (dto.RoomId.HasValue)
+        {
+            request.BorrowRequestRooms.Add(new BorrowRequestRoom
+            {
+                RoomId = dto.RoomId.Value
+            });
+        }
+
         _context.BorrowRequests.Add(request);
         await _context.SaveChangesAsync();
 
@@ -182,6 +198,7 @@ public class BorrowService : IBorrowService
             .Include(r => r.BorrowRequestAssets)
                 .ThenInclude(ra => ra.Asset)
             .Include(r => r.Requester)
+            .Include(r => r.BorrowRequestRooms)
             .FirstOrDefaultAsync(r => r.RequestId == requestId);
 
         if (request == null)
@@ -189,6 +206,28 @@ public class BorrowService : IBorrowService
 
         if (request.Status != RequestStatus.Pending)
             throw new Exception("Đơn mượn không ở trạng thái chờ duyệt.");
+
+        // Kiểm tra xung đột Phòng
+        if (request.BorrowRequestRooms.Any())
+        {
+            var roomIds = request.BorrowRequestRooms.Select(rr => rr.RoomId).ToList();
+            var conflictingRequests = await _context.BorrowRequests
+                .Include(r => r.BorrowRequestRooms)
+                    .ThenInclude(rr => rr.Room)
+                .Where(r => r.RequestId != requestId 
+                    && (r.Status == RequestStatus.Approved || r.Status == RequestStatus.CheckedOut)
+                    && r.BorrowStartAt < request.BorrowEndAt
+                    && r.BorrowEndAt > request.BorrowStartAt
+                    && r.BorrowRequestRooms.Any(rr => roomIds.Contains(rr.RoomId)))
+                .ToListAsync();
+
+            if (conflictingRequests.Any())
+            {
+                var conflict = conflictingRequests.First();
+                var roomName = conflict.BorrowRequestRooms.FirstOrDefault(rr => roomIds.Contains(rr.RoomId))?.Room?.RoomCode ?? "Phòng";
+                throw new Exception($"⚠️ XUNG ĐỘT PHÒNG: {roomName} đã được cấp cho đơn {conflict.RequestCode} từ {conflict.BorrowStartAt:HH:mm} đến {conflict.BorrowEndAt:HH:mm}. Vui lòng từ chối đơn hoặc yêu cầu sinh viên đổi phòng.");
+            }
+        }
 
         // Kiểm tra tồn kho trước khi duyệt
         var insufficientItems = new List<string>();

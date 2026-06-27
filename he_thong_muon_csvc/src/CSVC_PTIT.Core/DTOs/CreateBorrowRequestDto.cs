@@ -1,4 +1,4 @@
-﻿namespace CSVC_PTIT.Core.DTOs;
+namespace CSVC_PTIT.Core.DTOs;
 
 public class CreateBorrowRequestDto
 {
@@ -10,6 +10,7 @@ public class CreateBorrowRequestDto
     public string? Title { get; set; }
     public string? Purpose { get; set; }
     public string? RequestNote { get; set; }
+    public int? RoomId { get; set; }
 
     // Thời gian
     public DateTime BorrowStartAt { get; set; }

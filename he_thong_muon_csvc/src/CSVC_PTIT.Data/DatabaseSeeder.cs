@@ -145,16 +145,70 @@ public static class DatabaseSeeder
             new AssetCategory { CategoryCode = "VPP", CategoryName = "Văn phòng phẩm" }
         };
         context.AssetCategories.AddRange(categories);
+        }
 
-        var rooms = new List<Room> 
+        if (!context.Rooms.Any(r => r.RoomCode == "A101"))
         {
-            new Room { RoomCode = "B401", RoomName = "Phòng học B401", Building = "Tòa B", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom },
-            new Room { RoomCode = "B402", RoomName = "Phòng học B402", Building = "Tòa B", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom },
-            new Room { RoomCode = "HTD", RoomName = "Hội trường D", Building = "Tòa D", FloorNo = 1, Capacity = 300, RoomType = RoomType.Hall },
-            new Room { RoomCode = "A301", RoomName = "Phòng thí nghiệm A301", Building = "Tòa A", FloorNo = 3, Capacity = 30, RoomType = RoomType.Lab },
-            new Room { RoomCode = "A302", RoomName = "Phòng thí nghiệm A302", Building = "Tòa A", FloorNo = 3, Capacity = 30, RoomType = RoomType.Lab }
-        };
-        context.Rooms.AddRange(rooms);
+            var rooms = new List<Room>();
+
+            // Dãy A (Tòa A) - Giảng đường lý thuyết
+            // Tầng 1-3: x01-x08
+            for (int floor = 1; floor <= 3; floor++)
+            {
+                for (int num = 1; num <= 8; num++)
+                {
+                    rooms.Add(new Room { RoomCode = $"A{floor}{num:D2}", RoomName = $"Phòng học A{floor}{num:D2}", Building = "Tòa A", FloorNo = floor, Capacity = 50, RoomType = RoomType.Classroom });
+                }
+            }
+            // Tầng 4: 401-406
+            for (int num = 1; num <= 6; num++)
+            {
+                rooms.Add(new Room { RoomCode = $"A4{num:D2}", RoomName = $"Phòng học A4{num:D2}", Building = "Tòa A", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom });
+            }
+
+            // Dãy B (Tòa B) - Giảng đường lý thuyết
+            // Tầng 1-2: x01-x08
+            for (int floor = 1; floor <= 2; floor++)
+            {
+                for (int num = 1; num <= 8; num++)
+                {
+                    rooms.Add(new Room { RoomCode = $"B{floor}{num:D2}", RoomName = $"Phòng học B{floor}{num:D2}", Building = "Tòa B", FloorNo = floor, Capacity = 50, RoomType = RoomType.Classroom });
+                }
+            }
+            // Tầng 3: 301-306
+            for (int num = 1; num <= 6; num++)
+            {
+                rooms.Add(new Room { RoomCode = $"B3{num:D2}", RoomName = $"Phòng học B3{num:D2}", Building = "Tòa B", FloorNo = 3, Capacity = 50, RoomType = RoomType.Classroom });
+            }
+            // Tầng 4: 401-404
+            for (int num = 1; num <= 4; num++)
+            {
+                rooms.Add(new Room { RoomCode = $"B4{num:D2}", RoomName = $"Phòng học B4{num:D2}", Building = "Tòa B", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom });
+            }
+
+            // Cụm Phòng máy tính (Khu Thực hành)
+            for (int i = 1; i <= 8; i++)
+            {
+                rooms.Add(new Room { RoomCode = $"PM{i}", RoomName = $"Phòng máy tính {i}", Building = "Khu Thực hành", FloorNo = 1, Capacity = 40, RoomType = RoomType.Lab });
+            }
+
+            // Cụm Phòng Lab chuyên sâu
+            rooms.Add(new Room { RoomCode = "SecLab", RoomName = "Phòng thực hành An toàn thông tin", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
+            rooms.Add(new Room { RoomCode = "NetLab", RoomName = "Cisco Lab - Mạng & Viễn thông", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
+            rooms.Add(new Room { RoomCode = "MacLab", RoomName = "Multimedia Lab - Đa phương tiện", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
+            rooms.Add(new Room { RoomCode = "LabDTVT", RoomName = "Lab Điện tử - Viễn thông", Building = "Xưởng Thực hành", FloorNo = 1, Capacity = 40, RoomType = RoomType.Lab });
+
+            // Cơ sở Nguyễn Đình Chiểu (Q1)
+            rooms.Add(new Room { RoomCode = "P.101", RoomName = "Phòng học P.101", Building = "Cơ sở Q1", FloorNo = 1, Capacity = 50, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "P.102", RoomName = "Phòng học P.102", Building = "Cơ sở Q1", FloorNo = 1, Capacity = 50, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "P.201", RoomName = "Phòng học P.201", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "P.202", RoomName = "Phòng học P.202", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
+
+            context.Rooms.AddRange(rooms);
+        }
+
+        if (!context.Assets.Any())
+        {
 
         var assets = new List<Asset> 
         {

@@ -3,6 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 using CSVC_PTIT.Core.DTOs;
 using CSVC_PTIT.Core.Interfaces;
 using System.Collections.ObjectModel;
+using CSVC_PTIT.Data;
+using CSVC_PTIT.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CSVC_PTIT.App.ViewModels.SV;
 
@@ -16,8 +20,10 @@ public partial class DangKyMuonViewModel : ObservableObject
     [ObservableProperty] private string _soDienThoai = string.Empty;
     [ObservableProperty] private string _lop = string.Empty;
     [ObservableProperty] private string _monHoc = string.Empty;
-    [ObservableProperty] private string _phongHoc = string.Empty;
     [ObservableProperty] private string _ghiChu = string.Empty;
+
+    [ObservableProperty] private Room? _selectedRoom;
+    [ObservableProperty] private ObservableCollection<Room> _availableRooms = new();
 
     // Thời gian
     [ObservableProperty] private DateTime _ngayMuon = DateTime.Today;
@@ -35,15 +41,17 @@ public partial class DangKyMuonViewModel : ObservableObject
     // Tạm hardcode userId = 1, sau này lấy từ session
     private readonly IAuthService _authService;
     private readonly IAssetService _assetService;
+    private readonly CsvcDbContext _context;
 
     [ObservableProperty]
-    private ObservableCollection<CSVC_PTIT.Data.Entities.Asset> _availableAssets = new();
+    private ObservableCollection<Asset> _availableAssets = new();
 
     public DangKyMuonViewModel(IBorrowService borrowService, IAuthService authService, IAssetService assetService)
     {
         _borrowService = borrowService;
         _authService = authService;
         _assetService = assetService;
+        _context = App.ServiceProvider.GetRequiredService<CsvcDbContext>();
 
         // Tự động điền thông tin từ tài khoản đăng nhập
         var user = _authService.CurrentUser;
@@ -62,7 +70,11 @@ public partial class DangKyMuonViewModel : ObservableObject
     {
         var assets = await _assetService.GetAllAsync();
         // Chỉ lấy những tài sản khả dụng > 0
-        AvailableAssets = new ObservableCollection<CSVC_PTIT.Data.Entities.Asset>(assets.Where(a => a.AvailableQuantity > 0));
+        AvailableAssets = new ObservableCollection<Asset>(assets.Where(a => a.AvailableQuantity > 0));
+
+        // Load danh sách phòng học
+        var rooms = await _context.Rooms.OrderBy(r => r.RoomCode).ToListAsync();
+        AvailableRooms = new ObservableCollection<Room>(rooms);
     }
 
     [RelayCommand]
@@ -122,9 +134,10 @@ public partial class DangKyMuonViewModel : ObservableObject
             {
                 RequesterId = user.UserId,
                 ContactPhone = SoDienThoai,
-                Title = $"{MonHoc} - {PhongHoc}",
+                Title = SelectedRoom != null ? $"{MonHoc} - {SelectedRoom.RoomCode}" : $"{MonHoc}",
                 Purpose = $"Mượn CSVC cho môn {MonHoc}",
                 RequestNote = GhiChu,
+                RoomId = SelectedRoom?.RoomId,
                 BorrowStartAt = NgayMuon.Date + GioMuon.TimeOfDay,
                 BorrowEndAt = NgayMuon.Date + GioTra.TimeOfDay,
                 Assets = DanhSachCsvc.ToList()

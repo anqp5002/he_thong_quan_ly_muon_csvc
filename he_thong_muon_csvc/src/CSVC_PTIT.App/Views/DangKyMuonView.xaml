@@ -59,10 +59,17 @@
                              materialDesign:HintAssist.Hint="Môn học"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="8"
-                             Text="{Binding PhongHoc, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="Phòng học"
-                             Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Margin="8"
+                              ItemsSource="{Binding AvailableRooms}"
+                              SelectedItem="{Binding SelectedRoom, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Phòng học (Bắt buộc)"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RoomCode}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </Grid>
             </GroupBox>
 
