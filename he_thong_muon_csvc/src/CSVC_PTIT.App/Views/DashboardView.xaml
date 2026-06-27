@@ -43,7 +43,7 @@
                     <materialDesign:Card Margin="8" Padding="20" UniformCornerRadius="12">
                         <StackPanel>
                             <materialDesign:PackIcon Kind="AccountGroup" Width="32" Height="32"
-                                Foreground="#2196F3" />
+                                Foreground="{DynamicResource PrimaryHueMidBrush}" />
                             <TextBlock Text="Tài khoản" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
                             <TextBlock x:Name="TxtTotalUsers" Text="..." FontSize="28" FontWeight="Bold" />
                         </StackPanel>
