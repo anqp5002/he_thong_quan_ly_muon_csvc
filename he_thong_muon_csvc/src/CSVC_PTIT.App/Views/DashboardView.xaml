@@ -71,13 +71,5 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Logo PTIT HCM ở góc dưới phải -->
-        <Image Source="/Assets/ptit-logo.png" 
-               Width="150" 
-               HorizontalAlignment="Right" 
-               VerticalAlignment="Bottom" 
-               Margin="0,0,24,24" 
-               Opacity="0.8" 
-               IsHitTestVisible="False"/>
     </Grid>
 </UserControl>

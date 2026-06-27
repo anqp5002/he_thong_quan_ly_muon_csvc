@@ -27,12 +27,10 @@
 
                 <!-- === PHẦN TRÊN: Logo + Tên hệ thống === -->
                 <StackPanel DockPanel.Dock="Top" Margin="20,24,20,0">
-                    <!-- Icon logo -->
-                    <materialDesign:PackIcon 
-                        Kind="SchoolOutline" 
-                        Width="48" Height="48"
-                        Foreground="White"
-                        HorizontalAlignment="Center" />
+                    <!-- Logo PTIT -->
+                    <Border Background="White" Width="64" Height="64" CornerRadius="32" HorizontalAlignment="Center" Margin="0,0,0,8" Padding="4">
+                        <Image Source="/Assets/ptit-logo.png" />
+                    </Border>
 
                     <TextBlock
                         Text="QUẢN LÝ CSVC"
