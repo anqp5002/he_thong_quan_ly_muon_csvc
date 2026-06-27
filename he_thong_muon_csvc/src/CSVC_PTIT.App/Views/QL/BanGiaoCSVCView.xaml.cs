@@ -15,6 +15,7 @@ public partial class BanGiaoCSVCView : UserControl
 {
     private readonly ICheckoutService _checkoutService;
     private readonly IReportService _reportService;
+    private readonly IAuthService _authService;
     private readonly CsvcDbContext _context;
 
     private BorrowRequest? _selectedRequest;
@@ -27,6 +28,7 @@ public partial class BanGiaoCSVCView : UserControl
         
         _checkoutService = App.ServiceProvider.GetRequiredService<ICheckoutService>();
         _reportService = App.ServiceProvider.GetRequiredService<IReportService>();
+        _authService = App.ServiceProvider.GetRequiredService<IAuthService>();
         _context = App.ServiceProvider.GetRequiredService<CsvcDbContext>();
 
         LoadData();
@@ -125,9 +127,10 @@ public partial class BanGiaoCSVCView : UserControl
                 conditions[reqAsset.Asset.AssetId] = condition;
             }
 
+            var currentUserId = _authService.CurrentUser?.UserId ?? 1;
             var checkout = await _checkoutService.CreateCheckoutAsync(
                 _selectedRequest.RequestId, 
-                1 /* Thay bằng ID admin đang đăng nhập */, 
+                currentUserId, 
                 TxtGhiChuBanGiao.Text, 
                 conditions);
             

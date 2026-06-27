@@ -35,15 +35,21 @@ public class DamageReportService : IDamageReportService
             Status = DamageReportStatus.Open
         };
 
-        // Cập nhật tình trạng vật lý
+        // Cập nhật tình trạng vật lý + giảm số lượng khả dụng
         if (dto.IncidentType == IncidentType.Damage)
         {
             asset.ConditionStatus = ConditionStatus.Damaged;
+            // Giảm số lượng khả dụng (đồ hỏng không thể cho mượn tiếp)
+            if (asset.AvailableQuantity > 0)
+                asset.AvailableQuantity--;
         }
         else if (dto.IncidentType == IncidentType.Loss)
         {
             asset.ConditionStatus = ConditionStatus.Damaged;
             asset.AvailabilityStatus = AvailabilityStatus.Unavailable;
+            // Giảm cả tổng lẫn khả dụng (đồ bị mất hoàn toàn)
+            if (asset.TotalQuantity > 0) asset.TotalQuantity--;
+            if (asset.AvailableQuantity > 0) asset.AvailableQuantity--;
         }
 
         _context.DamageReports.Add(report);

@@ -42,6 +42,7 @@ public class AuthService : IAuthService
 
         var user = await context.Users
             .Include(u => u.Role)
+            .Include(u => u.Department)
             .FirstOrDefaultAsync(u => u.Email == email);
 
         if (user == null)
@@ -70,6 +71,9 @@ public class AuthService : IAuthService
         await context.SaveChangesAsync();
         
         CurrentUser = user;
+
+        var auditService = scope.ServiceProvider.GetRequiredService<IAuditLogService>();
+        await auditService.LogAsync(user.UserId, "Đăng nhập", "Hệ thống", null, "Người dùng đăng nhập thành công");
 
         // Bắt buộc đổi mật khẩu nếu pass là 123456
         if (BCrypt.Net.BCrypt.EnhancedVerify("123456", user.PasswordHash))

@@ -45,6 +45,16 @@ public partial class DangKyMuonViewModel : ObservableObject
         _authService = authService;
         _assetService = assetService;
 
+        // Tự động điền thông tin từ tài khoản đăng nhập
+        var user = _authService.CurrentUser;
+        if (user != null)
+        {
+            HoTen = user.FullName;
+            Mssv = user.StudentCode ?? user.EmployeeCode ?? "";
+            Lop = user.ClassName ?? user.Department?.DepartmentName ?? "";
+            SoDienThoai = user.Phone ?? "";
+        }
+
         LoadAssetsAsync();
     }
 

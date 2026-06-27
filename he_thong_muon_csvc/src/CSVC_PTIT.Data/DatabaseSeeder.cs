@@ -12,10 +12,9 @@ public static class DatabaseSeeder
     {
         await context.Database.EnsureCreatedAsync();
 
-        if (context.Roles.Any()) 
-            return;
-
-        var roles = new List<Role> 
+        if (!context.Roles.Any()) 
+        {
+            var roles = new List<Role> 
         {
             new Role { RoleCode = "SV", RoleName = "Sinh viên", Description = "Sinh viên mượn CSVC trong giờ học" },
             new Role { RoleCode = "DT", RoleName = "Đoàn thể", Description = "Bí thư Đoàn / CN CLB — tạo đơn mượn ngoài giờ" },
@@ -250,15 +249,19 @@ public static class DatabaseSeeder
                 AvailableQuantity = 5
             }
         };
-        context.Assets.AddRange(assets);
+            context.Assets.AddRange(assets);
+        }
 
-        var configs = new List<SystemConfig> 
+        if (!context.SystemConfigs.Any())
         {
-            new SystemConfig { ConfigKey = "max_borrow_hours", ConfigValue = "8", Description = "Số giờ mượn tối đa cho sinh viên" },
-            new SystemConfig { ConfigKey = "max_items_per_request", ConfigValue = "10", Description = "Số lượng thiết bị tối đa mỗi phiếu" },
-            new SystemConfig { ConfigKey = "overdue_notify_minutes", ConfigValue = "30", Description = "Báo trước khi quá hạn (phút)" }
-        };
-        context.SystemConfigs.AddRange(configs);
+            var configs = new List<SystemConfig> 
+            {
+                new SystemConfig { ConfigKey = "max_borrow_hours", ConfigValue = "8", Description = "Số giờ mượn tối đa cho sinh viên" },
+                new SystemConfig { ConfigKey = "max_items_per_request", ConfigValue = "10", Description = "Số lượng thiết bị tối đa mỗi phiếu" },
+                new SystemConfig { ConfigKey = "overdue_notify_minutes", ConfigValue = "30", Description = "Báo trước khi quá hạn (phút)" }
+            };
+            context.SystemConfigs.AddRange(configs);
+        }
 
         await context.SaveChangesAsync();
     }

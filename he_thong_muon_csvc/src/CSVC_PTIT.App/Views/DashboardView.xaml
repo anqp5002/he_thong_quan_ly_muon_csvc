@@ -15,7 +15,7 @@
                         <materialDesign:PackIcon Kind="Devices" Width="32" Height="32"
                             Foreground="{DynamicResource PrimaryHueMidBrush}" />
                         <TextBlock Text="Tổng CSVC" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
-                        <TextBlock Text="10" FontSize="28" FontWeight="Bold" />
+                        <TextBlock x:Name="TxtTotalAssets" Text="..." FontSize="28" FontWeight="Bold" />
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -25,7 +25,7 @@
                         <materialDesign:PackIcon Kind="DoorOpen" Width="32" Height="32"
                             Foreground="#4CAF50" />
                         <TextBlock Text="Phòng học" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
-                        <TextBlock Text="5" FontSize="28" FontWeight="Bold" />
+                        <TextBlock x:Name="TxtTotalRooms" Text="..." FontSize="28" FontWeight="Bold" />
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -35,7 +35,7 @@
                         <materialDesign:PackIcon Kind="ClockOutline" Width="32" Height="32"
                             Foreground="#FF9800" />
                         <TextBlock Text="Đơn chờ duyệt" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
-                        <TextBlock Text="0" FontSize="28" FontWeight="Bold" />
+                        <TextBlock x:Name="TxtPendingRequests" Text="..." FontSize="28" FontWeight="Bold" />
                     </StackPanel>
                 </materialDesign:Card>
 
@@ -45,7 +45,7 @@
                         <materialDesign:PackIcon Kind="AccountGroup" Width="32" Height="32"
                             Foreground="#2196F3" />
                         <TextBlock Text="Tài khoản" FontSize="13" Opacity="0.6" Margin="0,8,0,4" />
-                        <TextBlock Text="10" FontSize="28" FontWeight="Bold" />
+                        <TextBlock x:Name="TxtTotalUsers" Text="..." FontSize="28" FontWeight="Bold" />
                     </StackPanel>
                 </materialDesign:Card>
             </UniformGrid>

@@ -9,10 +9,12 @@ namespace CSVC_PTIT.Core.Services;
 public class CheckoutService : ICheckoutService
 {
     private readonly CsvcDbContext _context;
+    private readonly IAuditLogService _auditLogService;
 
-    public CheckoutService(CsvcDbContext context)
+    public CheckoutService(CsvcDbContext context, IAuditLogService auditLogService)
     {
         _context = context;
+        _auditLogService = auditLogService;
     }
 
     public async Task<Checkout> CreateCheckoutAsync(int requestId, int checkedOutByUserId, string note, Dictionary<int, string> assetConditions)
@@ -24,6 +26,31 @@ public class CheckoutService : ICheckoutService
 
         if (request == null) throw new Exception("Không tìm thấy đơn mượn.");
         if (request.Status != RequestStatus.Approved) throw new Exception("Đơn mượn chưa được duyệt hoặc đã xử lý.");
+
+        // Kiểm tra xung đột: CSVC đã được bàn giao cho đơn khác trong cùng khoảng thời gian
+        var assetIds = request.BorrowRequestAssets.Select(ra => ra.AssetId).ToList();
+        var conflictingCheckouts = await _context.Checkouts
+            .Include(c => c.BorrowRequest)
+            .Include(c => c.CheckoutItems)
+                .ThenInclude(ci => ci.Asset)
+            .Where(c => c.BorrowRequest.Status == RequestStatus.CheckedOut
+                && c.CheckoutItems.Any(ci => assetIds.Contains(ci.AssetId) && !ci.IsReturned)
+                && c.BorrowRequest.BorrowStartAt < request.BorrowEndAt
+                && c.BorrowRequest.BorrowEndAt > request.BorrowStartAt)
+            .ToListAsync();
+
+        if (conflictingCheckouts.Any())
+        {
+            var warnings = new List<string>();
+            foreach (var conflict in conflictingCheckouts)
+            {
+                var overlappingAssets = conflict.CheckoutItems
+                    .Where(ci => assetIds.Contains(ci.AssetId) && !ci.IsReturned)
+                    .Select(ci => ci.Asset?.AssetName ?? "?");
+                warnings.Add($"Đơn {conflict.BorrowRequest.RequestCode} ({conflict.BorrowRequest.BorrowStartAt:dd/MM HH:mm} - {conflict.BorrowRequest.BorrowEndAt:dd/MM HH:mm}): {string.Join(", ", overlappingAssets)}");
+            }
+            throw new Exception($"⚠️ CẢNH BÁO XUNG ĐỘT: Các CSVC sau đang được mượn bởi đơn khác cùng thời gian:\n" + string.Join("\n", warnings) + "\n\nVui lòng kiểm tra lại trước khi bàn giao.");
+        }
 
         var checkout = new Checkout
         {
@@ -61,6 +88,8 @@ public class CheckoutService : ICheckoutService
         request.Status = RequestStatus.CheckedOut;
         _context.Checkouts.Add(checkout);
         await _context.SaveChangesAsync();
+
+        await _auditLogService.LogAsync(checkedOutByUserId, "Bàn giao", "Checkout", checkout.CheckoutId, $"Quản lý bàn giao CSVC cho đơn {request.RequestCode}");
 
         return checkout;
     }

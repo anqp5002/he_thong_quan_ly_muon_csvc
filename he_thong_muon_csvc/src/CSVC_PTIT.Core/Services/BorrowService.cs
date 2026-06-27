@@ -12,15 +12,18 @@ public class BorrowService : IBorrowService
     private readonly CsvcDbContext _context;
     private readonly IEmailService _emailService;
     private readonly INotificationService _notificationService;
+    private readonly IAuditLogService _auditLogService;
 
     public BorrowService(
         CsvcDbContext context,
         IEmailService emailService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _emailService = emailService;
         _notificationService = notificationService;
+        _auditLogService = auditLogService;
     }
 
     public async Task<BorrowRequest> CreateInClassRequestAsync(CreateBorrowRequestDto dto)
@@ -63,9 +66,17 @@ public class BorrowService : IBorrowService
         _context.BorrowRequests.Add(request);
         await _context.SaveChangesAsync();
 
-        await NotifyManagersAsync(request);
+        // Reload đầy đủ thông tin Requester + Department + Assets để xuất PDF không bị thiếu
+        var fullRequest = await _context.BorrowRequests
+            .Include(r => r.Requester)
+                .ThenInclude(u => u.Department)
+            .Include(r => r.BorrowRequestAssets)
+                .ThenInclude(ra => ra.Asset)
+            .FirstAsync(r => r.RequestId == request.RequestId);
 
-        return request;
+        await NotifyManagersAsync(fullRequest);
+
+        return fullRequest;
     }
 
     private async Task NotifyManagersAsync(BorrowRequest request)
@@ -136,9 +147,19 @@ public class BorrowService : IBorrowService
         _context.BorrowRequests.Add(request);
         await _context.SaveChangesAsync();
 
-        await NotifyManagersAsync(request);
+        await _auditLogService.LogAsync(dto.RequesterId, "Tạo đơn", "BorrowRequest", request.RequestId, $"Đoàn thể tạo đơn mượn ngoài giờ {request.RequestCode}");
 
-        return request;
+        // Reload đầy đủ thông tin
+        var fullRequest = await _context.BorrowRequests
+            .Include(r => r.Requester)
+                .ThenInclude(u => u.Department)
+            .Include(r => r.BorrowRequestAssets)
+                .ThenInclude(ra => ra.Asset)
+            .FirstAsync(r => r.RequestId == request.RequestId);
+
+        await NotifyManagersAsync(fullRequest);
+
+        return fullRequest;
     }
 
     public async Task<List<BorrowRequest>> GetRequestsByStatusAsync(RequestStatus status)
@@ -157,6 +178,8 @@ public class BorrowService : IBorrowService
     {
         var request = await _context.BorrowRequests
             .Include(r => r.BorrowRequestAssets)
+                .ThenInclude(ra => ra.Asset)
+            .Include(r => r.Requester)
             .FirstOrDefaultAsync(r => r.RequestId == requestId);
 
         if (request == null)
@@ -164,6 +187,21 @@ public class BorrowService : IBorrowService
 
         if (request.Status != RequestStatus.Pending)
             throw new Exception("Đơn mượn không ở trạng thái chờ duyệt.");
+
+        // Kiểm tra tồn kho trước khi duyệt
+        var insufficientItems = new List<string>();
+        foreach (var item in request.BorrowRequestAssets)
+        {
+            if (item.Asset != null && item.QuantityRequested > item.Asset.AvailableQuantity)
+            {
+                insufficientItems.Add($"{item.Asset.AssetName} (yêu cầu: {item.QuantityRequested}, khả dụng: {item.Asset.AvailableQuantity})");
+            }
+        }
+
+        if (insufficientItems.Any())
+        {
+            throw new Exception($"Không đủ tồn kho để duyệt đơn:\n" + string.Join("\n", insufficientItems));
+        }
 
         request.Status = RequestStatus.Approved;
         request.ApprovedBy = approverId;
@@ -176,6 +214,14 @@ public class BorrowService : IBorrowService
         }
 
         await _context.SaveChangesAsync();
+
+        // Gửi thông báo cho sinh viên
+        await _notificationService.CreateNotificationAsync(
+            request.RequesterId,
+            $"Đơn mượn {request.RequestCode} đã được duyệt",
+            $"Đơn mượn của bạn đã được duyệt. Vui lòng đến phòng CSVC để nhận thiết bị.");
+
+        await _auditLogService.LogAsync(approverId, "Duyệt", "BorrowRequest", requestId, $"Quản lý duyệt đơn mượn {request.RequestCode}");
     }
 
     public async Task RejectRequestAsync(int requestId, int approverId, string reason)
@@ -194,5 +240,13 @@ public class BorrowService : IBorrowService
         request.RejectReason = reason;
 
         await _context.SaveChangesAsync();
+
+        // Gửi thông báo cho sinh viên biết lý do từ chối
+        await _notificationService.CreateNotificationAsync(
+            request.RequesterId,
+            $"Đơn mượn {request.RequestCode} bị từ chối",
+            $"Đơn mượn của bạn đã bị từ chối. Lý do: {reason}");
+
+        await _auditLogService.LogAsync(approverId, "Từ chối", "BorrowRequest", requestId, $"Quản lý từ chối đơn {request.RequestCode}: {reason}");
     }
 }

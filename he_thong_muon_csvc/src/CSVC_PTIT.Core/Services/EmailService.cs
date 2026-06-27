@@ -14,7 +14,7 @@ public class EmailService : IEmailService
     private const string SmtpUser = "anpham5002@gmail.com"; 
     
     // Mật khẩu ứng dụng (App Password) 16 ký tự của Google, KHÔNG phải mật khẩu đăng nhập thông thường:
-    private const string SmtpPass = "xxxx xxxx xxxx xxxx"; 
+    private const string SmtpPass = "svno vhaw hvrr fonl"; 
 
     private const string SmtpHost = "smtp.gmail.com";
     private const int SmtpPort = 587;

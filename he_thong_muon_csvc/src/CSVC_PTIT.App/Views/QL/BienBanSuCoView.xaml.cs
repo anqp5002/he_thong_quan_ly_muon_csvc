@@ -15,6 +15,7 @@ public partial class BienBanSuCoView : UserControl
 {
     private readonly IDamageReportService _damageReportService;
     private readonly IReportService _reportService;
+    private readonly IAuthService _authService;
     private readonly CsvcDbContext _context;
     
     private int _lastReportId = 0;
@@ -25,6 +26,7 @@ public partial class BienBanSuCoView : UserControl
         
         _damageReportService = App.ServiceProvider.GetRequiredService<IDamageReportService>();
         _reportService = App.ServiceProvider.GetRequiredService<IReportService>();
+        _authService = App.ServiceProvider.GetRequiredService<IAuthService>();
         _context = App.ServiceProvider.GetRequiredService<CsvcDbContext>();
 
         LoadData();
@@ -83,7 +85,8 @@ public partial class BienBanSuCoView : UserControl
                     EstimatedCompensation = compensation
                 };
 
-                var report = await _damageReportService.CreateReportAsync(1, dto); // 1 = Admin ID
+                var currentUserId = _authService.CurrentUser?.UserId ?? 1;
+                var report = await _damageReportService.CreateReportAsync(currentUserId, dto);
                 _lastReportId = report.ReportId;
 
                 MessageBox.Show("Đã tạo biên bản sự cố thành công!", "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
