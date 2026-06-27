@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\CSVC_PTIT.Core\CSVC_PTIT.Core.csproj" />
@@ -24,5 +24,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\ptit-logo.png" />
+  </ItemGroup>
 
 </Project>

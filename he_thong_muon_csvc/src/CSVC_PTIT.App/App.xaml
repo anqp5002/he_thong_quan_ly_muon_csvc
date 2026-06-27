@@ -8,8 +8,8 @@
                 <!-- Bảng màu: Tím đậm (chủ đạo) + Xanh lá (phụ), nền sáng -->
                 <materialDesign:BundledTheme 
                     BaseTheme="Light" 
-                    PrimaryColor="Cyan" 
-                    SecondaryColor="Lime" />
+                    PrimaryColor="Red" 
+                    SecondaryColor="Orange" />
                 
                 <!-- Style mặc định Material Design 3 cho tất cả control -->
                 <ResourceDictionary 

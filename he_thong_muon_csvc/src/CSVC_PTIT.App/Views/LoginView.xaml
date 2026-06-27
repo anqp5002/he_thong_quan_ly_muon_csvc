@@ -18,7 +18,7 @@
         
         <materialDesign:Card Width="320" Height="380" VerticalAlignment="Center" HorizontalAlignment="Center" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp4">
             <StackPanel Margin="24">
-                <TextBlock Text="CSVC PTIT" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,16" Foreground="{DynamicResource PrimaryHueMidBrush}"/>
+                <Image Source="/Assets/ptit-logo.png" Height="80" HorizontalAlignment="Center" Margin="0,0,0,16" />
                 
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,8" HorizontalAlignment="Center">
                     <TextBlock.Style>
