@@ -176,6 +176,8 @@ public class BorrowService : IBorrowService
 
     public async Task ApproveRequestAsync(int requestId, int approverId)
     {
+        _context.ChangeTracker.Clear();
+
         var request = await _context.BorrowRequests
             .Include(r => r.BorrowRequestAssets)
                 .ThenInclude(ra => ra.Asset)

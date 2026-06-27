@@ -178,4 +178,28 @@ public class AuthService : IAuthService
     {
         CurrentUser = null;
     }
+
+    public async Task UpdateProfileAsync(int userId, string fullName, string studentCode, string className, string phone)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<CsvcDbContext>();
+
+        var user = await context.Users.FindAsync(userId);
+        if (user != null)
+        {
+            user.FullName = fullName;
+            user.StudentCode = studentCode;
+            user.ClassName = className;
+            user.Phone = phone;
+            await context.SaveChangesAsync();
+
+            if (CurrentUser != null && CurrentUser.UserId == userId)
+            {
+                CurrentUser.FullName = fullName;
+                CurrentUser.StudentCode = studentCode;
+                CurrentUser.ClassName = className;
+                CurrentUser.Phone = phone;
+            }
+        }
+    }
 }

@@ -1,0 +1,18 @@
+khi tạo đơn mượn. xuất pdf ra thì ở mục tên, lớp và mssv bị để trống, có đơn lại có tên nhưng mssv và lớp thì không hiện.
+
+thông tin người mượn trong thẻ tạo đơn mượn như tên người mượn sẽ phụ thuộc vào mail. chứ không phải do nhập tên, nhập tên khác nhưng khi xuất đơn vẫn ra tên chủ tài khoản gmail
+
+
+trả xong đồ bị hỏng nhưng không cập nhật lại trong danh mục.( cái này quản lí phải tự cập nhật tay)
+
+quản lí cập nhật đồ đã bị hỏng nhưng trong thẻ tra cứu csvc khả dụng vẫn còn hiện là csvc khả dụng.
+
+một người mượn và bị hỏng 2 món đồ, trong thẻ sự cố của quản lí không có tùy chọn nhiều vật chất bị hỏng( 2 trở lên) cùng lúc. tức là cần phải tạo 2 biên bản xử lí sự cố trở lên thì mới xử lý được hết các csvc bị hỏng.
+
+sinh viên mượn csvc nhưng csvc không đủ số lượng(do hư hỏng hoặc đã bị mượn hết), quản lí vẫn duyệt đơn (trong thẻ bàn giao csvc, mục 2: kiểm tra vật tư khả dụng thì hiện thông báo không có đủ số lượng để cho mượn. vậy làm sao sinh viên biết đơn mượn có được duyệt không? và nếu không được duyệt thì vì lí do gì)... login vào mail sv thấy trạng thái của sinh viên vẫn là approved
+
+chỉ cần quản lí nhấn bàn giao thì bên thẻ đơn mượn của sinh viên đã hiện trạng thái checked out, 
+
+khi sinh viên gửi đơn mượn, trong thẻ báo cáo tồn kho của quản lí không hiện có bao nhiêu đơn đang chờ duyệt.
+
+hai sinh viên mượn cùng một giảng đường nhưng hệ thống vẫn bàn giao. không có cảnh báo trong  khi mượn cùng một csvc thì có cảnh báo.

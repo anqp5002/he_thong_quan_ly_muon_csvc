@@ -115,6 +115,9 @@ public partial class DangKyMuonViewModel : ObservableObject
 
         try
         {
+            // Cập nhật thông tin profile nếu người dùng có sửa trên form
+            await _authService.UpdateProfileAsync(user.UserId, HoTen, Mssv, Lop, SoDienThoai);
+
             var dto = new CreateBorrowRequestDto
             {
                 RequesterId = user.UserId,

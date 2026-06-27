@@ -19,6 +19,8 @@ public class CheckoutService : ICheckoutService
 
     public async Task<Checkout> CreateCheckoutAsync(int requestId, int checkedOutByUserId, string note, Dictionary<int, string> assetConditions)
     {
+        _context.ChangeTracker.Clear();
+
         var request = await _context.BorrowRequests
             .Include(r => r.BorrowRequestAssets)
             .ThenInclude(ra => ra.Asset)

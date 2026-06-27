@@ -23,6 +23,9 @@ public interface IAuthService
     /// <summary>Đăng xuất — xóa session</summary>
     void Logout();
 
+    /// <summary>Cập nhật thông tin profile</summary>
+    Task UpdateProfileAsync(int userId, string fullName, string studentCode, string className, string phone);
+
     /// <summary>User đang đăng nhập hiện tại (null = chưa login)</summary>
     User? CurrentUser { get; }
 
