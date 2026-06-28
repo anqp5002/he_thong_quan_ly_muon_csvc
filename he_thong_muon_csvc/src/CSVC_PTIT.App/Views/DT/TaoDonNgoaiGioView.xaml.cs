@@ -1,6 +1,8 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using CSVC_PTIT.App.ViewModels.DT;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 
 namespace CSVC_PTIT.App.Views.DT
@@ -16,6 +18,7 @@ namespace CSVC_PTIT.App.Views.DT
         public TaoDonNgoaiGioView()
         {
             InitializeComponent();
+            DataContext = App.ServiceProvider.GetRequiredService<TaoDonNgoaiGioViewModel>();
         }
 
         private void BtnChonAnh_Click(object sender, RoutedEventArgs e)

@@ -145,7 +145,7 @@ public partial class BanGiaoCSVCView : UserControl
         bool isValid = true;
         foreach (var reqAsset in _selectedRequest.BorrowRequestAssets)
         {
-            if (reqAsset.QuantityApproved > reqAsset.Asset.AvailableQuantity)
+            if (reqAsset.QuantityApproved <= 0)
             {
                 isValid = false;
                 MessageBox.Show($"Tài sản {reqAsset.Asset.AssetName} không đủ số lượng tồn kho!", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -233,6 +233,8 @@ public partial class BanGiaoCSVCView : UserControl
             .Include(c => c.CheckedOutToUser)
             .Include(c => c.CheckoutItems)
                 .ThenInclude(ci => ci.Asset)
+            .Include(c => c.CheckoutItems)
+                .ThenInclude(ci => ci.BorrowRequestAsset)
             .Where(c => c.CheckoutItems.Any(ci => !ci.IsReturned))
             .ToList();
 
@@ -301,8 +303,8 @@ public partial class BanGiaoCSVCView : UserControl
                 {
                     CheckoutItemId = ci.CheckoutItemId,
                     Asset = ci.Asset,
-                    Quantity = ci.Quantity,
-                    QuantityReturned = ci.Quantity,
+                    Quantity = Math.Max(0, ci.Quantity - ci.BorrowRequestAsset.QuantityReturned),
+                    QuantityReturned = Math.Max(0, ci.Quantity - ci.BorrowRequestAsset.QuantityReturned),
                     ConditionAfter = "Tốt"
                 }).ToList();
 

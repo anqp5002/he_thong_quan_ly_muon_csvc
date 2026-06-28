@@ -10,6 +10,7 @@ namespace CSVC_PTIT.App.ViewModels.SV;
 public partial class YeuCauHoanTraViewModel : ObservableObject
 {
     private readonly IBorrowService _borrowService;
+    private readonly IAuthService _authService;
 
     [ObservableProperty]
     private ObservableCollection<BorrowRequest> _danhSachDangMuon = new();
@@ -26,18 +27,24 @@ public partial class YeuCauHoanTraViewModel : ObservableObject
     [ObservableProperty]
     private bool _dangXuLy;
 
-    private readonly int _currentUserId = 1;
-
-    public YeuCauHoanTraViewModel(IBorrowService borrowService)
+    public YeuCauHoanTraViewModel(IBorrowService borrowService, IAuthService authService)
     {
         _borrowService = borrowService;
+        _authService = authService;
     }
 
     [RelayCommand]
     private async Task TaiDanhSachAsync()
     {
+        var user = _authService.CurrentUser;
+        if (user == null)
+        {
+            ThongBao = "Bạn chưa đăng nhập!";
+            return;
+        }
+
         DangXuLy = true;
-        var list = await _borrowService.GetRequestsByUserAsync(_currentUserId);
+        var list = await _borrowService.GetRequestsByUserAsync(user.UserId);
 
         // Chỉ hiện những đơn đang được bàn giao (CheckedOut)
         var dangMuon = list.Where(r => r.Status == RequestStatus.CheckedOut).ToList();

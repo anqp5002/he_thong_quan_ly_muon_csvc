@@ -86,6 +86,43 @@ public class BorrowService : IBorrowService
         }
     }
 
+    private async Task ValidateBorrowRequestDtoAsync(CreateBorrowRequestDto dto)
+    {
+        if (dto.BorrowStartAt >= dto.BorrowEndAt)
+            throw new Exception("Thời gian trả phải sau thời gian mượn.");
+
+        if (dto.Assets == null || dto.Assets.Count == 0)
+            throw new Exception("Vui lòng chọn ít nhất một CSVC.");
+
+        if (dto.Assets.Any(a => a.AssetId <= 0))
+            throw new Exception("Danh sách CSVC có mã không hợp lệ.");
+
+        if (dto.Assets.Any(a => a.QuantityRequested <= 0))
+            throw new Exception("Số lượng mượn phải lớn hơn 0.");
+
+        var duplicatedAssetId = dto.Assets
+            .GroupBy(a => a.AssetId)
+            .FirstOrDefault(g => g.Count() > 1)?.Key;
+        if (duplicatedAssetId.HasValue)
+            throw new Exception($"CSVC ID={duplicatedAssetId.Value} bị nhập trùng trong đơn. Vui lòng gộp số lượng vào một dòng.");
+
+        var assetIds = dto.Assets.Select(a => a.AssetId).ToList();
+        var assets = await _context.Assets
+            .Where(a => assetIds.Contains(a.AssetId))
+            .ToListAsync();
+
+        var missingAssetId = assetIds.FirstOrDefault(id => assets.All(a => a.AssetId != id));
+        if (missingAssetId > 0)
+            throw new Exception($"Không tìm thấy CSVC ID={missingAssetId}.");
+
+        var unavailableAsset = assets.FirstOrDefault(a =>
+            a.AvailabilityStatus != AvailabilityStatus.Available ||
+            a.ConditionStatus == ConditionStatus.Damaged ||
+            a.AvailableQuantity <= 0);
+        if (unavailableAsset != null)
+            throw new Exception($"CSVC {unavailableAsset.AssetName} hiện không khả dụng để mượn.");
+    }
+
     /// <summary>
     /// Kiểm tra trùng lịch phòng khi tạo đơn mượn.
     /// Nếu phòng đã được mượn (trạng thái Approved hoặc CheckedOut) trong khung giờ này thì từ chối.
@@ -112,6 +149,8 @@ public class BorrowService : IBorrowService
 
     public async Task<BorrowRequest> CreateInClassRequestAsync(CreateBorrowRequestDto dto)
     {
+        await ValidateBorrowRequestDtoAsync(dto);
+
         // BR-07: Kiểm tra tài khoản bị khóa
         await ValidateUserNotLocked(dto.RequesterId);
 
@@ -210,6 +249,8 @@ public class BorrowService : IBorrowService
 
     public async Task<BorrowRequest> CreateOffHoursRequestAsync(CreateBorrowRequestDto dto)
     {
+        await ValidateBorrowRequestDtoAsync(dto);
+
         // BR-07: Kiểm tra tài khoản bị khóa
         await ValidateUserNotLocked(dto.RequesterId);
 

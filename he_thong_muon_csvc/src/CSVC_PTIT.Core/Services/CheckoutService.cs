@@ -92,6 +92,9 @@ public class CheckoutService : ICheckoutService
         foreach (var reqAsset in request.BorrowRequestAssets)
         {
             var asset = reqAsset.Asset;
+            if (asset == null) throw new Exception($"Không tìm thấy CSVC ID={reqAsset.AssetId}.");
+            if (reqAsset.QuantityApproved <= 0)
+                throw new Exception($"CSVC {asset.AssetName} chưa có số lượng được duyệt để bàn giao.");
             // Lưu ý: Tồn kho đã được trừ ở bước Duyệt (ApproveRequestAsync)
             // Ở đây chỉ tạo CheckoutItem để ghi nhận bàn giao thực tế
 
@@ -105,6 +108,8 @@ public class CheckoutService : ICheckoutService
                 RequestAssetId = reqAsset.RequestAssetId,
                 AssetId = asset.AssetId
             });
+
+            reqAsset.QuantityCheckedOut = reqAsset.QuantityApproved;
         }
 
         request.Status = RequestStatus.CheckedOut;
@@ -152,8 +157,15 @@ public class CheckoutService : ICheckoutService
 
         foreach (var item in assets)
         {
+            if (item.AssetId <= 0)
+                throw new Exception("Danh sách CSVC có mã không hợp lệ.");
+            if (item.QuantityRequested <= 0)
+                throw new Exception("Số lượng mượn phải lớn hơn 0.");
+
             var asset = await _context.Assets.FindAsync(item.AssetId);
             if (asset == null) throw new Exception($"Không tìm thấy CSVC ID={item.AssetId}.");
+            if (asset.AvailabilityStatus != AvailabilityStatus.Available || asset.ConditionStatus == ConditionStatus.Damaged)
+                throw new Exception($"CSVC {asset.AssetName} hiện không khả dụng để mượn.");
             if (asset.AvailableQuantity < item.QuantityRequested)
                 throw new Exception($"Không đủ tồn kho: {asset.AssetName} (yêu cầu: {item.QuantityRequested}, khả dụng: {asset.AvailableQuantity})");
 

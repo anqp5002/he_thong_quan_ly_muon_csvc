@@ -65,9 +65,11 @@ public partial class App : Application
         services.AddTransient<TraCuuCSVCViewModel>();       // Sprint 1 — B.1
         services.AddTransient<ViewModels.SV.TheoDoiDonMuonViewModel>(); // Sprint 1 — B.4
         services.AddTransient<ViewModels.SV.DangKyMuonViewModel>();
+        services.AddTransient<ViewModels.SV.YeuCauHoanTraViewModel>();
 
         // Mới bổ sung cho Sprint 2 & 1
         services.AddTransient<ViewModels.DT.DanhSachDonCanDuyetViewModel>();
+        services.AddTransient<ViewModels.DT.TaoDonNgoaiGioViewModel>();
         services.AddTransient<ViewModels.QL.DanhSachDonDaDuyetViewModel>();
         services.AddTransient<ThongBaoViewModel>();
 

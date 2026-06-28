@@ -1,6 +1,7 @@
 using CSVC_PTIT.Core.Interfaces;
 using CSVC_PTIT.Data;
 using CSVC_PTIT.Data.Entities;
+using CSVC_PTIT.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -62,6 +63,11 @@ public class AuthService : IAuthService
                 throw new Exception("Bạn đã đăng nhập sai 5 lần. Khóa tạm 30 giây.");
             }
             return null; // Sai email hoặc password
+        }
+
+        if (user.Status == UserStatus.Locked)
+        {
+            throw new Exception("Tài khoản đang bị khóa do có biên bản sự cố chưa xử lý. Vui lòng liên hệ phòng CSVC để được hỗ trợ.");
         }
 
         // Đăng nhập thành công

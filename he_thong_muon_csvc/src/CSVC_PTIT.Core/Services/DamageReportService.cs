@@ -20,11 +20,37 @@ public class DamageReportService : IDamageReportService
         var asset = await _context.Assets.FindAsync(dto.AssetId);
         if (asset == null) throw new Exception("Không tìm thấy CSVC.");
 
+        var responsibleUser = await _context.Users.FindAsync(dto.ResponsibleUserId);
+        if (responsibleUser == null) throw new Exception("Không tìm thấy người chịu trách nhiệm.");
+
+        var requestStatus = await _context.BorrowRequests
+            .Where(r => r.RequestId == dto.RequestId)
+            .Select(r => (RequestStatus?)r.Status)
+            .FirstOrDefaultAsync();
+        if (!requestStatus.HasValue) throw new Exception("Không tìm thấy đơn mượn liên quan.");
+
+        var returnItemId = dto.ReturnItemId;
+        if (!returnItemId.HasValue)
+        {
+            returnItemId = await _context.ReturnItems
+                .Where(ri => ri.AssetId == dto.AssetId && (ri.IsDamaged || ri.IsLost))
+                .Where(ri => ri.Return.Checkout.RequestId == dto.RequestId)
+                .OrderByDescending(ri => ri.Return.ReturnedAt)
+                .Select(ri => (int?)ri.ReturnItemId)
+                .FirstOrDefaultAsync();
+        }
+
+        if (returnItemId.HasValue)
+        {
+            var returnItemExists = await _context.ReturnItems.AnyAsync(ri => ri.ReturnItemId == returnItemId.Value);
+            if (!returnItemExists) throw new Exception("Không tìm thấy dòng trả có sự cố.");
+        }
+
         var report = new DamageReport
         {
             ReportedBy = reportedByUserId,
             RequestId = dto.RequestId,
-            ReturnItemId = dto.ReturnItemId,
+            ReturnItemId = returnItemId,
             AssetId = dto.AssetId,
             ResponsibleUserId = dto.ResponsibleUserId,
             Severity = dto.Severity,
@@ -35,11 +61,19 @@ public class DamageReportService : IDamageReportService
             Status = DamageReportStatus.Open
         };
 
-        // Cập nhật tình trạng vật lý + giảm số lượng khả dụng
-        if (dto.IncidentType == IncidentType.Damage)
+        var assetAlreadyReservedByRequest =
+            requestStatus == RequestStatus.Approved ||
+            requestStatus == RequestStatus.CheckedOut;
+
+        if (returnItemId.HasValue || assetAlreadyReservedByRequest)
         {
             asset.ConditionStatus = ConditionStatus.Damaged;
-            // Giảm số lượng khả dụng (đồ hỏng không thể cho mượn tiếp)
+            if (dto.IncidentType == IncidentType.Loss)
+                asset.AvailabilityStatus = AvailabilityStatus.Unavailable;
+        }
+        else if (dto.IncidentType == IncidentType.Damage)
+        {
+            asset.ConditionStatus = ConditionStatus.Damaged;
             if (asset.AvailableQuantity > 0)
                 asset.AvailableQuantity--;
         }
@@ -47,10 +81,11 @@ public class DamageReportService : IDamageReportService
         {
             asset.ConditionStatus = ConditionStatus.Damaged;
             asset.AvailabilityStatus = AvailabilityStatus.Unavailable;
-            // Giảm cả tổng lẫn khả dụng (đồ bị mất hoàn toàn)
             if (asset.TotalQuantity > 0) asset.TotalQuantity--;
             if (asset.AvailableQuantity > 0) asset.AvailableQuantity--;
         }
+
+        responsibleUser.Status = UserStatus.Locked;
 
         _context.DamageReports.Add(report);
         await _context.SaveChangesAsync();
@@ -75,6 +110,8 @@ public class DamageReportService : IDamageReportService
             .Include(r => r.ResponsibleUser)
             .Include(r => r.ReportedByUser)
             .Include(r => r.BorrowRequest)
+                .ThenInclude(br => br.Checkouts)
+                    .ThenInclude(c => c.CheckoutItems)
             .FirstOrDefaultAsync(r => r.ReportId == reportId);
     }
 
@@ -82,6 +119,9 @@ public class DamageReportService : IDamageReportService
     {
         var report = await _context.DamageReports
             .Include(r => r.ResponsibleUser)
+            .Include(r => r.BorrowRequest)
+                .ThenInclude(br => br.Checkouts)
+                    .ThenInclude(c => c.CheckoutItems)
             .FirstOrDefaultAsync(r => r.ReportId == reportId);
         if (report == null) throw new Exception("Không tìm thấy biên bản.");
 
@@ -90,19 +130,24 @@ public class DamageReportService : IDamageReportService
         report.ResolutionNote = note;
         report.ResolvedAt = DateTime.Now;
 
-        // BR-07: Auto Unlock User — kiểm tra còn biên bản nào đang Open không
-        if (report.ResponsibleUserId > 0)
+        if (report.BorrowRequest != null &&
+            report.BorrowRequest.Status == RequestStatus.CheckedOut &&
+            report.BorrowRequest.Checkouts.SelectMany(c => c.CheckoutItems).All(ci => ci.IsReturned))
         {
-            var hasOpenReports = await _context.DamageReports
-                .AnyAsync(dr => dr.ResponsibleUserId == report.ResponsibleUserId
-                    && dr.ReportId != reportId
-                    && dr.Status != DamageReportStatus.Closed);
+            report.BorrowRequest.Status = RequestStatus.Returned;
+            report.BorrowRequest.ActualReturnAt = DateTime.Now;
+        }
 
-            if (!hasOpenReports && report.ResponsibleUser != null
-                && report.ResponsibleUser.Status == UserStatus.Locked)
-            {
-                report.ResponsibleUser.Status = UserStatus.Active;
-            }
+        var hasOpenReports = await _context.DamageReports
+            .AnyAsync(dr => dr.ResponsibleUserId == report.ResponsibleUserId
+                && dr.ReportId != reportId
+                && dr.Status != DamageReportStatus.Closed);
+
+        if (!hasOpenReports &&
+            report.ResponsibleUser != null &&
+            report.ResponsibleUser.Status == UserStatus.Locked)
+        {
+            report.ResponsibleUser.Status = UserStatus.Active;
         }
 
         await _context.SaveChangesAsync();
