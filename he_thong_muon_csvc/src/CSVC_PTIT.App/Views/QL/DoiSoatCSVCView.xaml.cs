@@ -94,13 +94,24 @@ public partial class DoiSoatCSVCView : UserControl
                 _lastReturnId = returnObj.ReturnId;
 
                 bool hasDamage = dtoList.Any(d => d.IsDamaged || d.IsLost);
+
+                // BR-06: Hiển thị cảnh báo trễ hạn
+                if (returnObj.LateMinutes > 0)
+                {
+                    MessageBox.Show(
+                        $"⏰ Đơn trả TRỄ HẠN {returnObj.LateMinutes} phút!\nThông tin này đã được ghi nhận vào hệ thống.",
+                        "Cảnh báo trễ hạn", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
                 if (hasDamage)
                 {
-                    MessageBox.Show("Phát hiện có thiết bị hỏng/mất! Hệ thống đã HOLD (tạm giữ) đơn mượn này. Vui lòng sang mục 'Sự cố' để lập biên bản và thông báo trạng thái thiết bị hỏng.", "Cảnh báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                else
-                {
-                    // "không có thông báo gì thêm" (không show MessageBox thành công, chỉ reset UI)
+                    MessageBox.Show(
+                        "Phát hiện có thiết bị hỏng/mất!\n\n" +
+                        "• Hệ thống đã HOLD (tạm giữ) đơn mượn này.\n" +
+                        "• Tài khoản người mượn đã bị KHÓA tạm thời.\n" +
+                        "• Vui lòng sang mục 'Sự cố' để lập biên bản.\n\n" +
+                        "Tài khoản sẽ được mở khóa sau khi biên bản sự cố được xử lý xong.",
+                        "Cảnh báo sự cố", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 
                 BtnInPhieuTra.IsEnabled = true;

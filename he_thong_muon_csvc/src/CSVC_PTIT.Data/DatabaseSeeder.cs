@@ -147,62 +147,82 @@ public static class DatabaseSeeder
         context.AssetCategories.AddRange(categories);
         }
 
-        if (!context.Rooms.Any(r => r.RoomCode == "A101"))
+        if (!context.Rooms.Any(r => r.RoomCode == "2A08"))
         {
             var rooms = new List<Room>();
 
-            // Dãy A (Tòa A) - Giảng đường lý thuyết
-            // Tầng 1-3: x01-x08
-            for (int floor = 1; floor <= 3; floor++)
-            {
-                for (int num = 1; num <= 8; num++)
-                {
-                    rooms.Add(new Room { RoomCode = $"A{floor}{num:D2}", RoomName = $"Phòng học A{floor}{num:D2}", Building = "Tòa A", FloorNo = floor, Capacity = 50, RoomType = RoomType.Classroom });
-                }
-            }
-            // Tầng 4: 401-406
-            for (int num = 1; num <= 6; num++)
-            {
-                rooms.Add(new Room { RoomCode = $"A4{num:D2}", RoomName = $"Phòng học A4{num:D2}", Building = "Tòa A", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom });
-            }
+            // KHU A (Khu trung tâm)
+            // Tầng trệt
+            rooms.Add(new Room { RoomCode = "2A08", RoomName = "Phòng 2A08", Building = "Khu A", FloorNo = 1, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "TC-HC", RoomName = "Phòng TC - HC (Tài chính - Hành chính)", Building = "Khu A", FloorNo = 1, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "Hội đồng", RoomName = "Phòng hội đồng", Building = "Khu A", FloorNo = 1, RoomType = RoomType.Hall });
+            rooms.Add(new Room { RoomCode = "CSVC", RoomName = "Trung tâm CSVC & Dịch vụ", Building = "Khu A", FloorNo = 1, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "KTTC", RoomName = "Phòng KTTC (Kế toán Tài chính)", Building = "Khu A", FloorNo = 1, RoomType = RoomType.Office });
+            
+            // Lầu 1
+            rooms.Add(new Room { RoomCode = "2A16", RoomName = "Phòng 2A16", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "QTKD2", RoomName = "Khoa QTKD 2", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "LDHV", RoomName = "Lãnh đạo HV", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "VT2", RoomName = "Khoa Viễn Thông 2", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "CB2", RoomName = "Khoa Cơ Bản 2", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "DT-KHCN", RoomName = "Phòng Đào tạo & KHCN", Building = "Khu A", FloorNo = 2, RoomType = RoomType.Office });
 
-            // Dãy B (Tòa B) - Giảng đường lý thuyết
-            // Tầng 1-2: x01-x08
-            for (int floor = 1; floor <= 2; floor++)
-            {
-                for (int num = 1; num <= 8; num++)
-                {
-                    rooms.Add(new Room { RoomCode = $"B{floor}{num:D2}", RoomName = $"Phòng học B{floor}{num:D2}", Building = "Tòa B", FloorNo = floor, Capacity = 50, RoomType = RoomType.Classroom });
-                }
-            }
-            // Tầng 3: 301-306
-            for (int num = 1; num <= 6; num++)
-            {
-                rooms.Add(new Room { RoomCode = $"B3{num:D2}", RoomName = $"Phòng học B3{num:D2}", Building = "Tòa B", FloorNo = 3, Capacity = 50, RoomType = RoomType.Classroom });
-            }
-            // Tầng 4: 401-404
-            for (int num = 1; num <= 4; num++)
-            {
-                rooms.Add(new Room { RoomCode = $"B4{num:D2}", RoomName = $"Phòng học B4{num:D2}", Building = "Tòa B", FloorNo = 4, Capacity = 50, RoomType = RoomType.Classroom });
-            }
+            // Lầu 2
+            for (int i = 23; i <= 27; i++)
+                rooms.Add(new Room { RoomCode = $"2A{i}", RoomName = $"Giảng đường 2A{i}", Building = "Khu A", FloorNo = 3, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "GV-A2", RoomName = "Phòng Giáo viên Lầu 2", Building = "Khu A", FloorNo = 3, RoomType = RoomType.Office });
 
-            // Cụm Phòng máy tính (Khu Thực hành)
-            for (int i = 1; i <= 8; i++)
-            {
-                rooms.Add(new Room { RoomCode = $"PM{i}", RoomName = $"Phòng máy tính {i}", Building = "Khu Thực hành", FloorNo = 1, Capacity = 40, RoomType = RoomType.Lab });
-            }
+            // Lầu 3
+            for (int i = 32; i <= 36; i++)
+                rooms.Add(new Room { RoomCode = $"2A{i}", RoomName = $"Giảng đường 2A{i}", Building = "Khu A", FloorNo = 4, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "GV-A3", RoomName = "Phòng Giáo viên Lầu 3", Building = "Khu A", FloorNo = 4, RoomType = RoomType.Office });
 
-            // Cụm Phòng Lab chuyên sâu
-            rooms.Add(new Room { RoomCode = "SecLab", RoomName = "Phòng thực hành An toàn thông tin", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
-            rooms.Add(new Room { RoomCode = "NetLab", RoomName = "Cisco Lab - Mạng & Viễn thông", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
-            rooms.Add(new Room { RoomCode = "MacLab", RoomName = "Multimedia Lab - Đa phương tiện", Building = "Khu Thực hành", FloorNo = 2, Capacity = 40, RoomType = RoomType.Lab });
-            rooms.Add(new Room { RoomCode = "LabDTVT", RoomName = "Lab Điện tử - Viễn thông", Building = "Xưởng Thực hành", FloorNo = 1, Capacity = 40, RoomType = RoomType.Lab });
+            // KHU B (Dãy bên phải)
+            // Tầng trệt
+            rooms.Add(new Room { RoomCode = "KĐCLGD", RoomName = "Trung tâm khảo thí ĐBCL GD", Building = "Khu B", FloorNo = 1, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "CTSV", RoomName = "Phòng công tác sinh viên", Building = "Khu B", FloorNo = 1, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "GV-B", RoomName = "Phòng giáo vụ", Building = "Khu B", FloorNo = 1, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "2B03", RoomName = "Phòng hội thảo 2B03", Building = "Khu B", FloorNo = 1, RoomType = RoomType.Hall });
 
-            // Cơ sở Nguyễn Đình Chiểu (Q1)
-            rooms.Add(new Room { RoomCode = "P.101", RoomName = "Phòng học P.101", Building = "Cơ sở Q1", FloorNo = 1, Capacity = 50, RoomType = RoomType.Classroom });
-            rooms.Add(new Room { RoomCode = "P.102", RoomName = "Phòng học P.102", Building = "Cơ sở Q1", FloorNo = 1, Capacity = 50, RoomType = RoomType.Classroom });
-            rooms.Add(new Room { RoomCode = "P.201", RoomName = "Phòng học P.201", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
-            rooms.Add(new Room { RoomCode = "P.202", RoomName = "Phòng học P.202", Building = "Cơ sở Q1", FloorNo = 2, Capacity = 50, RoomType = RoomType.Classroom });
+            // Lầu 1
+            rooms.Add(new Room { RoomCode = "CNTT2", RoomName = "Khoa công nghệ thông tin 2", Building = "Khu B", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "TH-B1", RoomName = "Phòng thực hành Lầu 1", Building = "Khu B", FloorNo = 2, RoomType = RoomType.Lab });
+
+            // Lầu 2
+            for (int i = 22; i <= 25; i++)
+                rooms.Add(new Room { RoomCode = $"2B{i}", RoomName = $"Giảng đường 2B{i}", Building = "Khu B", FloorNo = 3, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "TH-B2", RoomName = "Phòng thực hành Lầu 2", Building = "Khu B", FloorNo = 3, RoomType = RoomType.Lab });
+
+            // Lầu 3
+            for (int i = 32; i <= 34; i++)
+                rooms.Add(new Room { RoomCode = $"2B{i}", RoomName = $"Giảng đường 2B{i}", Building = "Khu B", FloorNo = 4, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "TH-B3", RoomName = "Phòng thực hành Lầu 3", Building = "Khu B", FloorNo = 4, RoomType = RoomType.Lab });
+
+            // KHU C (Khối màu xanh lá)
+            rooms.Add(new Room { RoomCode = "TV-T", RoomName = "Thư viện (Tầng trệt)", Building = "Khu C", FloorNo = 1, RoomType = RoomType.Hall });
+            rooms.Add(new Room { RoomCode = "DT2", RoomName = "Khoa Điện tử 2", Building = "Khu C", FloorNo = 2, RoomType = RoomType.Office });
+            rooms.Add(new Room { RoomCode = "TV-1", RoomName = "Thư viện (Tầng trên của thư viện)", Building = "Khu C", FloorNo = 2, RoomType = RoomType.Hall });
+
+            // KHU D (Khối màu xanh dương)
+            rooms.Add(new Room { RoomCode = "HT-D", RoomName = "HỘI TRƯỜNG D", Building = "Khu D", FloorNo = 1, RoomType = RoomType.Hall });
+            rooms.Add(new Room { RoomCode = "TH-D1", RoomName = "Phòng thực hành 1", Building = "Khu D", FloorNo = 1, RoomType = RoomType.Lab });
+            rooms.Add(new Room { RoomCode = "TH-D2", RoomName = "Phòng thực hành 2", Building = "Khu D", FloorNo = 1, RoomType = RoomType.Lab });
+
+            // KHU E (Dãy bên trái)
+            rooms.Add(new Room { RoomCode = "2E01", RoomName = "Phòng 2E01", Building = "Khu E", FloorNo = 1, RoomType = RoomType.Classroom });
+            rooms.Add(new Room { RoomCode = "2E02", RoomName = "Phòng 2E02", Building = "Khu E", FloorNo = 1, RoomType = RoomType.Classroom });
+            for (int i = 4; i <= 7; i++)
+                rooms.Add(new Room { RoomCode = $"2E0{i}", RoomName = $"Giảng đường 2E0{i}", Building = "Khu E", FloorNo = 1, RoomType = RoomType.Classroom });
+
+            rooms.Add(new Room { RoomCode = "GV-E1", RoomName = "Phòng giáo viên", Building = "Khu E", FloorNo = 2, RoomType = RoomType.Office });
+            for (int i = 14; i <= 17; i++)
+                rooms.Add(new Room { RoomCode = $"2E{i}", RoomName = $"Phòng học ngoại ngữ 2E{i}", Building = "Khu E", FloorNo = 2, RoomType = RoomType.Classroom });
+
+            rooms.Add(new Room { RoomCode = "TN-VL", RoomName = "Phòng TN Vật lý", Building = "Khu E", FloorNo = 3, RoomType = RoomType.Lab });
+            rooms.Add(new Room { RoomCode = "2E27", RoomName = "Giảng đường 2E27", Building = "Khu E", FloorNo = 3, RoomType = RoomType.Classroom });
+
+            for (int i = 31; i <= 37; i++)
+                rooms.Add(new Room { RoomCode = $"2E{i}", RoomName = $"Giảng đường 2E{i}", Building = "Khu E", FloorNo = 4, RoomType = RoomType.Classroom });
 
             var existingRoomCodes = context.Rooms.Select(r => r.RoomCode).ToHashSet();
             var roomsToAdd = rooms.Where(r => !existingRoomCodes.Contains(r.RoomCode)).ToList();

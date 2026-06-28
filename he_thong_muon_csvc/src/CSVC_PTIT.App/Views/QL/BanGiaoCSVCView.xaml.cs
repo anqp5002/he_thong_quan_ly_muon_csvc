@@ -94,7 +94,9 @@ public partial class BanGiaoCSVCView : UserControl
             .AsNoTracking()
             .Include(r => r.Requester)
             .Include(r => r.BorrowRequestAssets)
-            .ThenInclude(ra => ra.Asset)
+                .ThenInclude(ra => ra.Asset)
+            .Include(r => r.BorrowRequestRooms)
+                .ThenInclude(rr => rr.Room)
             .Where(r => r.Status == RequestStatus.Approved)
             .ToList();
         
@@ -154,6 +156,11 @@ public partial class BanGiaoCSVCView : UserControl
         if (isValid)
         {
             TxtNguoiNhan.Text = $"Người nhận: {_selectedRequest.Requester.FullName} - {_selectedRequest.Requester.Phone}";
+            
+            // Hiển thị phòng mượn
+            var roomNames = _selectedRequest.BorrowRequestRooms.Select(rr => rr.Room?.RoomCode).Where(r => r != null).ToList();
+            TxtPhongMuon.Text = roomNames.Any() ? string.Join(", ", roomNames) : "Không có";
+
             GridChiTietBanGiao.ItemsSource = _selectedRequest.BorrowRequestAssets;
             ((TabItem)this.FindName("TabPhieuBanGiao")).IsSelected = true;
         }

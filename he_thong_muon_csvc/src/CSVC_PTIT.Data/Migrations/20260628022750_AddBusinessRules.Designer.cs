@@ -4,6 +4,7 @@ using CSVC_PTIT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSVC_PTIT.Data.Migrations
 {
     [DbContext(typeof(CsvcDbContext))]
-    partial class CsvcDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260628022750_AddBusinessRules")]
+    partial class AddBusinessRules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -781,9 +784,6 @@ namespace CSVC_PTIT.Data.Migrations
                     b.Property<int?>("Capacity")
                         .HasColumnType("int")
                         .HasColumnName("capacity");
-
-                    b.Property<string>("Condition")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("FloorNo")
                         .HasColumnType("int")

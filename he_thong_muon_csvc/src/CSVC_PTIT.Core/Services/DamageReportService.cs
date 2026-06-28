@@ -80,13 +80,30 @@ public class DamageReportService : IDamageReportService
 
     public async Task ResolveReportAsync(int reportId, decimal actualCompensation, string note)
     {
-        var report = await _context.DamageReports.FindAsync(reportId);
+        var report = await _context.DamageReports
+            .Include(r => r.ResponsibleUser)
+            .FirstOrDefaultAsync(r => r.ReportId == reportId);
         if (report == null) throw new Exception("Không tìm thấy biên bản.");
 
         report.Status = DamageReportStatus.Closed;
         report.ActualCompensation = actualCompensation;
         report.ResolutionNote = note;
         report.ResolvedAt = DateTime.Now;
+
+        // BR-07: Auto Unlock User — kiểm tra còn biên bản nào đang Open không
+        if (report.ResponsibleUserId > 0)
+        {
+            var hasOpenReports = await _context.DamageReports
+                .AnyAsync(dr => dr.ResponsibleUserId == report.ResponsibleUserId
+                    && dr.ReportId != reportId
+                    && dr.Status != DamageReportStatus.Closed);
+
+            if (!hasOpenReports && report.ResponsibleUser != null
+                && report.ResponsibleUser.Status == UserStatus.Locked)
+            {
+                report.ResponsibleUser.Status = UserStatus.Active;
+            }
+        }
 
         await _context.SaveChangesAsync();
     }

@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Báo Cáo Tồn Kho CSVC (Sprint 2)" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+        <TextBlock Text="Báo Cáo Tồn Kho CSVC" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
             <ComboBox materialDesign:HintAssist.Hint="Kỳ Báo Cáo" Width="200" Margin="0,0,20,0">

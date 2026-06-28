@@ -49,6 +49,9 @@ public class BorrowRequest
     /// <summary>Lý do từ chối (nếu bị reject)</summary>
     public string? RejectReason { get; set; }
 
+    /// <summary>Đường dẫn file minh chứng đính kèm (cho đơn ngoài giờ)</summary>
+    public string? AttachmentPath { get; set; }
+
     /// <summary>Thời điểm duyệt đơn</summary>
     public DateTime? ApprovedAt { get; set; }
 

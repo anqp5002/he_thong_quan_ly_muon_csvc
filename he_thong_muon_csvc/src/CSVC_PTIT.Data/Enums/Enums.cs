@@ -61,7 +61,8 @@ public enum RoomType
 {
     Classroom,   // Phòng học
     Hall,        // Hội trường
-    Lab          // Phòng thí nghiệm
+    Lab,         // Phòng thí nghiệm
+    Office       // Phòng ban hành chính / Khoa
 }
 
 /// <summary>

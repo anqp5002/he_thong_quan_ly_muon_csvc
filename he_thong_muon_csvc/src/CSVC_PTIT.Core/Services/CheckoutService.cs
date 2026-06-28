@@ -1,3 +1,4 @@
+using CSVC_PTIT.Core.DTOs;
 using CSVC_PTIT.Core.Interfaces;
 using CSVC_PTIT.Data;
 using CSVC_PTIT.Data.Entities;
@@ -91,13 +92,8 @@ public class CheckoutService : ICheckoutService
         foreach (var reqAsset in request.BorrowRequestAssets)
         {
             var asset = reqAsset.Asset;
-            if (asset.AvailableQuantity < reqAsset.QuantityApproved)
-            {
-                throw new Exception($"Không đủ số lượng khả dụng cho CSVC: {asset.AssetName}");
-            }
-
-            // Trừ số lượng tồn kho
-            asset.AvailableQuantity -= reqAsset.QuantityApproved;
+            // Lưu ý: Tồn kho đã được trừ ở bước Duyệt (ApproveRequestAsync)
+            // Ở đây chỉ tạo CheckoutItem để ghi nhận bàn giao thực tế
 
             var condition = assetConditions.ContainsKey(asset.AssetId) ? assetConditions[asset.AssetId] : "Tốt";
 
@@ -116,6 +112,101 @@ public class CheckoutService : ICheckoutService
         await _context.SaveChangesAsync();
 
         await _auditLogService.LogAsync(checkedOutByUserId, "Bàn giao", "Checkout", checkout.CheckoutId, $"Quản lý bàn giao CSVC cho đơn {request.RequestCode}");
+
+        return checkout;
+    }
+
+    /// <summary>
+    /// Tạo nhanh đơn mượn vãng lai tại quầy (UC-09 Luồng 3b).
+    /// Gộp: Tạo đơn → Duyệt → Bàn giao thành 1 bước duy nhất.
+    /// </summary>
+    public async Task<Checkout> CreateInstantCheckoutAsync(
+        int studentUserId, int staffUserId, string note,
+        List<BorrowRequestAssetDto> assets, int? roomId)
+    {
+        _context.ChangeTracker.Clear();
+
+        var student = await _context.Users.FindAsync(studentUserId);
+        if (student == null) throw new Exception("Không tìm thấy sinh viên.");
+        if (student.Status == UserStatus.Locked)
+            throw new Exception("Tài khoản sinh viên đang bị khóa, không thể mượn.");
+
+        // Tạo đơn mượn trực tiếp
+        var count = await _context.BorrowRequests.CountAsync() + 1;
+        var request = new BorrowRequest
+        {
+            RequestCode = $"VL-{count:D3}",  // VL = Vãng Lai
+            RequestType = RequestType.InClass,
+            RequesterId = studentUserId,
+            Title = "Mượn trực tiếp tại quầy",
+            Purpose = note,
+            BorrowStartAt = DateTime.Now,
+            BorrowEndAt = DateTime.Now.AddHours(3),
+            ExpectedReturnAt = DateTime.Now.AddHours(3),
+            Status = RequestStatus.CheckedOut,  // Bỏ qua Pending/Approved
+            ApprovedBy = staffUserId,
+            ApprovedAt = DateTime.Now,
+            PriorityLevel = PriorityLevel.Normal,
+            CreatedAt = DateTime.Now
+        };
+
+        foreach (var item in assets)
+        {
+            var asset = await _context.Assets.FindAsync(item.AssetId);
+            if (asset == null) throw new Exception($"Không tìm thấy CSVC ID={item.AssetId}.");
+            if (asset.AvailableQuantity < item.QuantityRequested)
+                throw new Exception($"Không đủ tồn kho: {asset.AssetName} (yêu cầu: {item.QuantityRequested}, khả dụng: {asset.AvailableQuantity})");
+
+            // Trừ tồn kho
+            asset.AvailableQuantity -= item.QuantityRequested;
+
+            request.BorrowRequestAssets.Add(new BorrowRequestAsset
+            {
+                AssetId = item.AssetId,
+                QuantityRequested = item.QuantityRequested,
+                QuantityApproved = item.QuantityRequested,
+                QuantityCheckedOut = item.QuantityRequested,
+                QuantityReturned = 0,
+                ItemNote = item.ItemNote
+            });
+        }
+
+        if (roomId.HasValue)
+        {
+            request.BorrowRequestRooms.Add(new BorrowRequestRoom { RoomId = roomId.Value });
+        }
+
+        _context.BorrowRequests.Add(request);
+        await _context.SaveChangesAsync();
+
+        // Tạo phiếu bàn giao ngay
+        var checkout = new Checkout
+        {
+            CheckoutCode = $"BG-VL-{DateTime.Now:yyyyMMddHHmmss}",
+            CheckoutAt = DateTime.Now,
+            CheckoutNote = $"Mượn vãng lai tại quầy: {note}",
+            RequestId = request.RequestId,
+            CheckedOutBy = staffUserId,
+            CheckedOutTo = studentUserId
+        };
+
+        foreach (var reqAsset in request.BorrowRequestAssets)
+        {
+            checkout.CheckoutItems.Add(new CheckoutItem
+            {
+                ConditionBefore = "Tốt",
+                Quantity = reqAsset.QuantityApproved,
+                IsReturned = false,
+                RequestAssetId = reqAsset.RequestAssetId,
+                AssetId = reqAsset.AssetId
+            });
+        }
+
+        _context.Checkouts.Add(checkout);
+        await _context.SaveChangesAsync();
+
+        await _auditLogService.LogAsync(staffUserId, "Bàn giao vãng lai", "Checkout", checkout.CheckoutId,
+            $"QL tạo nhanh đơn vãng lai {request.RequestCode} cho SV {student.FullName}");
 
         return checkout;
     }

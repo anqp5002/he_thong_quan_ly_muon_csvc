@@ -16,6 +16,9 @@ public class CreateBorrowRequestDto
     public DateTime BorrowStartAt { get; set; }
     public DateTime BorrowEndAt { get; set; }
 
+    // File minh chứng (đơn ngoài giờ)
+    public string? AttachmentPath { get; set; }
+
     // Danh sách CSVC cần mượn
     public List<BorrowRequestAssetDto> Assets { get; set; } = new();
 }

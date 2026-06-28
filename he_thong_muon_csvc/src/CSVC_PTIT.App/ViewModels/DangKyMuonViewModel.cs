@@ -5,10 +5,19 @@ using CSVC_PTIT.Core.Interfaces;
 using System.Collections.ObjectModel;
 using CSVC_PTIT.Data;
 using CSVC_PTIT.Data.Entities;
+using CSVC_PTIT.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CSVC_PTIT.App.ViewModels.SV;
+
+public class RoomStatusItem
+{
+    public string RoomCode { get; set; } = string.Empty;
+    public string TrangThaiSang { get; set; } = "Trống";
+    public string TrangThaiChieu { get; set; } = "Trống";
+    public string TrangThaiToi { get; set; } = "Trống";
+}
 
 public partial class DangKyMuonViewModel : ObservableObject
 {
@@ -29,6 +38,10 @@ public partial class DangKyMuonViewModel : ObservableObject
     [ObservableProperty] private DateTime _ngayMuon = DateTime.Today;
     [ObservableProperty] private DateTime _gioMuon = DateTime.Now;
     [ObservableProperty] private DateTime _gioTra = DateTime.Now.AddHours(2);
+
+    // Lịch phòng
+    [ObservableProperty] private DateTime _ngayTraCuu = DateTime.Today;
+    [ObservableProperty] private ObservableCollection<RoomStatusItem> _danhSachLichPhong = new();
 
     // Danh sách CSVC trong đơn
     [ObservableProperty]
@@ -64,6 +77,7 @@ public partial class DangKyMuonViewModel : ObservableObject
         }
 
         LoadAssetsAsync();
+        _ = TaiLichPhongAsync();
     }
 
     private async void LoadAssetsAsync()
@@ -75,6 +89,41 @@ public partial class DangKyMuonViewModel : ObservableObject
         // Load danh sách phòng học
         var rooms = await _context.Rooms.OrderBy(r => r.RoomCode).ToListAsync();
         AvailableRooms = new ObservableCollection<Room>(rooms);
+    }
+
+    [RelayCommand]
+    private async Task TaiLichPhongAsync()
+    {
+        var targetDate = NgayTraCuu.Date;
+        var endOfDay = targetDate.AddDays(1).AddTicks(-1);
+
+        var rooms = await _context.Rooms.OrderBy(r => r.RoomCode).ToListAsync();
+        var requests = await _context.BorrowRequests
+            .Include(r => r.BorrowRequestRooms)
+            .Where(r => r.Status == RequestStatus.Approved || r.Status == RequestStatus.CheckedOut)
+            .Where(r => r.BorrowStartAt <= endOfDay && r.BorrowEndAt >= targetDate)
+            .ToListAsync();
+
+        var list = new ObservableCollection<RoomStatusItem>();
+        foreach (var room in rooms)
+        {
+            var item = new RoomStatusItem { RoomCode = room.RoomCode };
+            
+            // Tìm các đơn mượn phòng này trong ngày
+            var roomRequests = requests.Where(r => r.BorrowRequestRooms.Any(rr => rr.RoomId == room.RoomId)).ToList();
+            
+            foreach (var req in roomRequests)
+            {
+                var start = req.BorrowStartAt.TimeOfDay;
+                var end = req.BorrowEndAt.TimeOfDay;
+
+                if (start < new TimeSpan(11, 30, 0)) item.TrangThaiSang = $"Kín ({req.BorrowStartAt:HH:mm}-{req.BorrowEndAt:HH:mm})";
+                if (start < new TimeSpan(17, 30, 0) && end > new TimeSpan(12, 0, 0)) item.TrangThaiChieu = $"Kín ({req.BorrowStartAt:HH:mm}-{req.BorrowEndAt:HH:mm})";
+                if (end > new TimeSpan(17, 30, 0)) item.TrangThaiToi = $"Kín ({req.BorrowStartAt:HH:mm}-{req.BorrowEndAt:HH:mm})";
+            }
+            list.Add(item);
+        }
+        DanhSachLichPhong = list;
     }
 
     [RelayCommand]

@@ -19,6 +19,7 @@ public class ReturnService : IReturnService
     {
         var checkout = await _context.Checkouts
             .Include(c => c.BorrowRequest)
+                .ThenInclude(br => br.Requester)
             .Include(c => c.CheckoutItems)
             .ThenInclude(ci => ci.Asset)
             .FirstOrDefaultAsync(c => c.CheckoutId == checkoutId);
@@ -27,10 +28,18 @@ public class ReturnService : IReturnService
 
         var request = checkout.BorrowRequest;
 
+        // BR-06: Tính thời gian trả trễ
+        int lateMinutes = 0;
+        if (request.ExpectedReturnAt < DateTime.Now)
+        {
+            lateMinutes = (int)(DateTime.Now - request.ExpectedReturnAt).TotalMinutes;
+        }
+
         var returnObj = new Return
         {
             ReturnedAt = DateTime.Now,
             ReturnNote = note,
+            LateMinutes = lateMinutes,
             CheckoutId = checkout.CheckoutId,
             ReceivedBy = receivedByUserId,
             ReturnedBy = checkout.CheckedOutTo
@@ -82,7 +91,12 @@ public class ReturnService : IReturnService
             request.Status = RequestStatus.Returned;
             request.ActualReturnAt = returnObj.ReturnedAt;
         }
-        // NẾU CÓ SỰ CỐ -> Hold đơn lại (vẫn giữ trạng thái CheckedOut hoặc không đổi sang Returned)
+
+        // BR-07: Auto Lock User khi có sự cố hỏng/mất
+        if (hasDamage && request.Requester != null)
+        {
+            request.Requester.Status = UserStatus.Locked;
+        }
 
         _context.Returns.Add(returnObj);
         await _context.SaveChangesAsync();

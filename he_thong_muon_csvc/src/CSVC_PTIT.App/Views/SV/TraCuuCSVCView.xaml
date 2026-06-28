@@ -16,7 +16,10 @@
             <i:InvokeCommandAction Command="{Binding LoadDataCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid Margin="24">
+    <TabControl md:ColorZoneAssist.Mode="PrimaryMid" Style="{StaticResource MaterialDesignFilledTabControl}" Margin="16">
+        <!-- TAB 1: TRA CỨU THIẾT BỊ -->
+        <TabItem Header="1. Tra cứu thiết bị">
+            <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -176,5 +179,43 @@
                    Text="{Binding ErrorMessage}"
                    Foreground="OrangeRed"
                    Margin="0,8,0,0" />
-    </Grid>
+            </Grid>
+        </TabItem>
+
+        <!-- TAB 2: TRẠNG THÁI PHÒNG -->
+        <TabItem Header="2. Trạng thái phòng học">
+            <Grid Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Bảng Theo Dõi Trạng Thái Phòng Học / Hội Trường"
+                           Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                           Margin="0,0,0,16"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
+                    <DatePicker SelectedDate="{Binding NgayTraCuu, UpdateSourceTrigger=PropertyChanged}"
+                                md:HintAssist.Hint="Ngày tra cứu"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                Width="150" Margin="0,0,16,0"/>
+                    <Button Content="Tải lại lịch" Command="{Binding TaiLichPhongCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2" ItemsSource="{Binding DanhSachLichPhong}"
+                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          GridLinesVisibility="All">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Phòng" Binding="{Binding RoomCode}" Width="150" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="Tình trạng" Binding="{Binding Condition}" Width="150"/>
+                        <DataGridTextColumn Header="Sáng (07:00-11:00)" Binding="{Binding TrangThaiSang}" Width="250"/>
+                        <DataGridTextColumn Header="Chiều (13:00-17:00)" Binding="{Binding TrangThaiChieu}" Width="250"/>
+                        <DataGridTextColumn Header="Tối (Sau 17:00)" Binding="{Binding TrangThaiToi}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </UserControl>

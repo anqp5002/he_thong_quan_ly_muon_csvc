@@ -13,6 +13,9 @@ public class Return
 
     public string? ReturnNote { get; set; }
 
+    /// <summary>Số phút trả trễ hạn (0 nếu trả đúng hạn)</summary>
+    public int LateMinutes { get; set; } = 0;
+
     // ===== FK =====
 
     /// <summary>FK → Phiếu bàn giao gốc (để đối soát)</summary>

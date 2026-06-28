@@ -14,6 +14,12 @@ public class BorrowService : IBorrowService
     private readonly INotificationService _notificationService;
     private readonly IAuditLogService _auditLogService;
 
+    // Khung giờ cho phép sinh viên mượn (hard-code theo yêu cầu)
+    private static readonly TimeSpan MornStart = new(7, 0, 0);
+    private static readonly TimeSpan MornEnd = new(10, 30, 0);
+    private static readonly TimeSpan AfterStart = new(13, 0, 0);
+    private static readonly TimeSpan AfterEnd = new(16, 30, 0);
+
     public BorrowService(
         CsvcDbContext context,
         IEmailService emailService,
@@ -26,8 +32,95 @@ public class BorrowService : IBorrowService
         _auditLogService = auditLogService;
     }
 
+    /// <summary>
+    /// Kiểm tra tài khoản có bị khóa không (BR-07).
+    /// Nếu bị khóa do sự cố chưa xử lý → không cho tạo đơn.
+    /// </summary>
+    private async Task ValidateUserNotLocked(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) throw new Exception("Không tìm thấy người dùng.");
+        if (user.Status == UserStatus.Locked)
+            throw new Exception("Tài khoản của bạn tạm thời bị khóa quyền mượn thiết bị do có sự cố chưa xử lý. Vui lòng liên hệ phòng CSVC để được hỗ trợ.");
+    }
+
+    /// <summary>
+    /// Kiểm tra email sinh viên chỉ mượn trong khung giờ cho phép (BR-02).
+    /// @student.ptithcm.edu.vn → Sáng 7:00-10:30, Chiều 13:00-16:30.
+    /// </summary>
+    private async Task ValidateStudentTimeSlot(int userId, DateTime startAt, DateTime endAt)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return;
+
+        // Chỉ kiểm tra với tài khoản sinh viên (@student)
+        if (!user.Email.EndsWith("@student.ptithcm.edu.vn", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        var startTime = startAt.TimeOfDay;
+        var endTime = endAt.TimeOfDay;
+
+        bool inMorning = startTime >= MornStart && endTime <= MornEnd;
+        bool inAfternoon = startTime >= AfterStart && endTime <= AfterEnd;
+
+        if (!inMorning && !inAfternoon)
+        {
+            throw new Exception(
+                $"Sinh viên chỉ được mượn CSVC trong khung giờ:\n" +
+                $"• Sáng: 07:00 – 10:30\n" +
+                $"• Chiều: 13:00 – 16:30\n\n" +
+                $"Thời gian bạn chọn ({startAt:HH:mm} – {endAt:HH:mm}) không hợp lệ.");
+        }
+    }
+
+    private async Task ValidateOffHoursPermission(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) throw new Exception("Không tìm thấy người dùng.");
+
+        if (user.Email.EndsWith("@student.ptithcm.edu.vn", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception(
+                "Tài khoản sinh viên không có quyền tạo đơn mượn ngoài giờ.\n" +
+                "Vui lòng liên hệ Bí thư LCĐ hoặc Chủ nhiệm CLB để tạo đơn.");
+        }
+    }
+
+    /// <summary>
+    /// Kiểm tra trùng lịch phòng khi tạo đơn mượn.
+    /// Nếu phòng đã được mượn (trạng thái Approved hoặc CheckedOut) trong khung giờ này thì từ chối.
+    /// </summary>
+    private async Task ValidateRoomNotOverlapped(int? roomId, DateTime startAt, DateTime endAt)
+    {
+        if (!roomId.HasValue) return;
+
+        var conflictingRequests = await _context.BorrowRequests
+            .Include(r => r.BorrowRequestRooms)
+                .ThenInclude(rr => rr.Room)
+            .Where(r => r.Status == RequestStatus.Approved || r.Status == RequestStatus.CheckedOut)
+            .Where(r => r.BorrowStartAt < endAt && r.BorrowEndAt > startAt)
+            .Where(r => r.BorrowRequestRooms.Any(rr => rr.RoomId == roomId.Value))
+            .ToListAsync();
+
+        if (conflictingRequests.Any())
+        {
+            var conflict = conflictingRequests.First();
+            var roomName = conflict.BorrowRequestRooms.FirstOrDefault(rr => rr.RoomId == roomId.Value)?.Room?.RoomCode ?? "Phòng này";
+            throw new Exception($"⚠️ Không thể mượn: {roomName} đã được sử dụng từ {conflict.BorrowStartAt:HH:mm} đến {conflict.BorrowEndAt:HH:mm} ngày {conflict.BorrowStartAt:dd/MM/yyyy}.\nVui lòng chọn phòng khác hoặc đổi khung giờ.");
+        }
+    }
+
     public async Task<BorrowRequest> CreateInClassRequestAsync(CreateBorrowRequestDto dto)
     {
+        // BR-07: Kiểm tra tài khoản bị khóa
+        await ValidateUserNotLocked(dto.RequesterId);
+
+        // BR-02: Kiểm tra khung giờ sinh viên
+        await ValidateStudentTimeSlot(dto.RequesterId, dto.BorrowStartAt, dto.BorrowEndAt);
+
+        // Kiểm tra trùng lịch phòng
+        await ValidateRoomNotOverlapped(dto.RoomId, dto.BorrowStartAt, dto.BorrowEndAt);
+
         // Sinh mã đơn tự động: SV-001, SV-002...
         var count = await _context.BorrowRequests.CountAsync() + 1;
         var requestCode = $"SV-{count:D3}";
@@ -114,8 +207,18 @@ public class BorrowService : IBorrowService
             .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
     }
+
     public async Task<BorrowRequest> CreateOffHoursRequestAsync(CreateBorrowRequestDto dto)
     {
+        // BR-07: Kiểm tra tài khoản bị khóa
+        await ValidateUserNotLocked(dto.RequesterId);
+
+        // Chặn sinh viên tạo đơn ngoài giờ
+        await ValidateOffHoursPermission(dto.RequesterId);
+
+        // Kiểm tra trùng lịch phòng
+        await ValidateRoomNotOverlapped(dto.RoomId, dto.BorrowStartAt, dto.BorrowEndAt);
+
         // Sinh mã đơn DT-001, DT-002...
         var count = await _context.BorrowRequests
             .Where(r => r.RequestType == RequestType.OffHours)
@@ -131,6 +234,7 @@ public class BorrowService : IBorrowService
             Title = dto.Title,
             Purpose = dto.Purpose,
             RequestNote = dto.RequestNote,
+            AttachmentPath = dto.AttachmentPath,
             BorrowStartAt = dto.BorrowStartAt,
             BorrowEndAt = dto.BorrowEndAt,
             ExpectedReturnAt = dto.BorrowEndAt,
@@ -229,29 +333,29 @@ public class BorrowService : IBorrowService
             }
         }
 
-        // Kiểm tra tồn kho trước khi duyệt
-        var insufficientItems = new List<string>();
+        // Kiểm tra tồn kho VÀ trừ ngay khi duyệt (BR-03)
         foreach (var item in request.BorrowRequestAssets)
         {
             if (item.Asset != null && item.QuantityRequested > item.Asset.AvailableQuantity)
             {
-                insufficientItems.Add($"{item.Asset.AssetName} (yêu cầu: {item.QuantityRequested}, khả dụng: {item.Asset.AvailableQuantity})");
+                throw new Exception($"Không đủ tồn kho: {item.Asset.AssetName} (yêu cầu: {item.QuantityRequested}, khả dụng: {item.Asset.AvailableQuantity})");
             }
-        }
-
-        if (insufficientItems.Any())
-        {
-            throw new Exception($"Không đủ tồn kho để duyệt đơn:\n" + string.Join("\n", insufficientItems));
         }
 
         request.Status = RequestStatus.Approved;
         request.ApprovedBy = approverId;
         request.ApprovedAt = DateTime.Now;
 
-        // Tự động gán số lượng duyệt = số lượng yêu cầu
+        // Tự động gán số lượng duyệt = số lượng yêu cầu VÀ TRỪ TỒN KHO NGAY
         foreach (var item in request.BorrowRequestAssets)
         {
             item.QuantityApproved = item.QuantityRequested;
+
+            // BR-03: Trừ số lượng khả dụng ngay khi duyệt
+            if (item.Asset != null)
+            {
+                item.Asset.AvailableQuantity -= item.QuantityRequested;
+            }
         }
 
         await _context.SaveChangesAsync();

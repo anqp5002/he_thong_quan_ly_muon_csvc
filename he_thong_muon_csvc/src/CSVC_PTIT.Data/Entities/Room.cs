@@ -30,6 +30,9 @@ public class Room
     /// <summary>Trạng thái: Available/InUse/Maintenance</summary>
     public RoomStatus Status { get; set; } = RoomStatus.Available;
 
+    /// <summary>Tình trạng phòng (ví dụ: Mới, Cũ, Đang sửa chữa)</summary>
+    public string? Condition { get; set; } = "Mới";
+
     // ===== Navigation ngược =====
 
     /// <summary>Các CSVC đang đặt trong phòng này</summary>
